@@ -1,0 +1,329 @@
+/* `source(none)` disables Tailwind's automatic project-wide file scanning,
+   which would otherwise crawl .claude/skills/ and inflate the bundle.
+   Only src/ holds markup that can contain utility classes. */
+@import 'tailwindcss' source(none);
+@source '../**/*.{astro,html,ts,tsx,js,jsx,md,mdx}';
+
+/* ---------------------------------------------------------------------------
+   Layer 1 — primitive tokens (raw values, never used directly in components)
+--------------------------------------------------------------------------- */
+:root {
+	--brand-50: #eff6ff;
+	--brand-400: #60a5fa;
+	--brand-500: #3b82f6;
+	--brand-600: #2563eb;
+	--brand-700: #1d4ed8;
+	--accent-400: #22d3ee;
+	--accent-500: #06b6d4;
+	--accent-600: #0891b2;
+	--accent-700: #0e7490;
+
+	--radius-card: 1rem;
+	--radius-pill: 9999px;
+}
+
+/* ---------------------------------------------------------------------------
+   Layer 2 — semantic tokens (what components actually consume)
+   The site ships a single dark theme, so these are absolute values with no
+   per-theme overrides.
+--------------------------------------------------------------------------- */
+:root {
+	--bg: #08090c;
+	--bg-subtle: #0b0d12;
+	--surface: #0f1117;
+	--surface-raised: #161923;
+	--fg: #f8fafc;
+	--fg-muted: #94a3b8;
+	--fg-subtle: #76849a; /* 4.62:1 on --surface-raised (WCAG AA) */
+	--border: #1e2230;
+	--border-strong: #2a3040;
+
+	--primary: var(--brand-600);
+	--primary-hover: var(--brand-500);
+	--on-primary: #ffffff;
+	--accent: var(--accent-400);
+	--link: var(--brand-400);
+	--ring: var(--brand-400);
+
+	/* Free-trial CTA. A bright fill with a near-black label clears 8.5:1;
+	   white on green-600 would only reach 3.3:1. */
+	--trial-fill: #4ade80;
+	--trial-on-fill: #052e16;
+	--trial-ring: #22c55e;
+	--trial-text: #4ade80;
+
+	--glass-bg: rgb(15 17 23 / 0.6);
+	--glass-border: rgb(255 255 255 / 0.1);
+	--glow-primary: 0 0 25px rgb(37 99 235 / 0.45);
+	--glow-primary-hover: 0 0 45px rgb(59 130 246 / 0.7);
+}
+
+
+/* ---------------------------------------------------------------------------
+   Layer 3 — expose semantic tokens to Tailwind.
+   `@theme inline` keeps the var() reference live, so utilities such as
+   `bg-surface` respond to the theme switch at runtime.
+--------------------------------------------------------------------------- */
+@theme inline {
+	--color-bg: var(--bg);
+	--color-bg-subtle: var(--bg-subtle);
+	--color-surface: var(--surface);
+	--color-surface-raised: var(--surface-raised);
+	--color-fg: var(--fg);
+	--color-fg-muted: var(--fg-muted);
+	--color-fg-subtle: var(--fg-subtle);
+	--color-border: var(--border);
+	--color-border-strong: var(--border-strong);
+	--color-primary: var(--primary);
+	--color-primary-hover: var(--primary-hover);
+	--color-on-primary: var(--on-primary);
+	--color-accent: var(--accent);
+	--color-link: var(--link);
+	--color-ring: var(--ring);
+	--color-trial-fill: var(--trial-fill);
+	--color-trial-on-fill: var(--trial-on-fill);
+	--color-trial-text: var(--trial-text);
+
+	--font-sans:
+		'Inter Variable', 'Inter', ui-sans-serif, system-ui, -apple-system,
+		'Segoe UI', sans-serif;
+
+	--radius-card: 1rem;
+}
+
+/* ---------------------------------------------------------------------------
+   Base
+--------------------------------------------------------------------------- */
+@layer base {
+	html {
+		scroll-behavior: smooth;
+		/* Keeps anchored headings clear of the 4rem sticky header. */
+		scroll-padding-top: 5rem;
+		color-scheme: dark;
+	}
+
+	body {
+		background-color: var(--color-bg);
+		color: var(--color-fg);
+		-webkit-font-smoothing: antialiased;
+	}
+
+	/* One visible focus ring for every interactive control (WCAG 2.4.7). */
+	:focus-visible {
+		outline: 2px solid var(--color-ring);
+		outline-offset: 2px;
+		border-radius: 4px;
+	}
+
+	::selection {
+		background-color: color-mix(in oklab, var(--primary) 40%, transparent);
+		color: var(--color-fg);
+	}
+
+	/* Honour reduced-motion globally rather than per-component. */
+	@media (prefers-reduced-motion: reduce) {
+		html {
+			scroll-behavior: auto;
+		}
+		*,
+		*::before,
+		*::after {
+			animation-duration: 0.01ms !important;
+			animation-iteration-count: 1 !important;
+			transition-duration: 0.01ms !important;
+		}
+	}
+}
+
+/* ---------------------------------------------------------------------------
+   Utilities
+--------------------------------------------------------------------------- */
+@utility no-scrollbar {
+	scrollbar-width: none;
+	&::-webkit-scrollbar {
+		display: none;
+	}
+}
+
+/* Frosted panel used by the header, dropdown and glass cards. */
+@utility glass {
+	background-color: var(--glass-bg);
+	border-color: var(--glass-border);
+	backdrop-filter: blur(12px);
+}
+
+@utility glow-primary {
+	box-shadow: var(--glow-primary);
+}
+
+@utility glow-primary-hover {
+	box-shadow: var(--glow-primary-hover);
+}
+
+/* Faint grid texture behind hero/banner sections. */
+@utility bg-grid {
+	background-image:
+		linear-gradient(to right, var(--color-border) 1px, transparent 1px),
+		linear-gradient(to bottom, var(--color-border) 1px, transparent 1px);
+	background-size: 64px 64px;
+	mask-image: radial-gradient(ellipse at center, black, transparent 75%);
+}
+
+/* ---------------------------------------------------------------------------
+   Scroll-driven reveals
+   ---------------------------------------------------------------------------
+   Native CSS scroll timelines — no JavaScript, no library, GPU-composited.
+   Three guards make this safe to ship:
+     1. `prefers-reduced-motion: no-preference` — motion is opt-out by OS.
+     2. `@supports (animation-timeline: view())` — browsers without scroll
+        timelines never apply `opacity: 0`, so content is simply visible.
+     3. `both` fill — anything already on screen at load (the hero) renders in
+        its final state instead of waiting for a scroll that never comes.
+   Only headings and card groups animate: 1-2 elements per view, per the
+   motion guidance. Offsets stay at 12px so it reads as a fade, not a slide.
+--------------------------------------------------------------------------- */
+@keyframes reveal-in {
+	from {
+		opacity: 0;
+		transform: translateY(12px);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+@media (prefers-reduced-motion: no-preference) {
+	@supports (animation-timeline: view()) {
+		.reveal,
+		.reveal-group > * {
+			animation: reveal-in linear both;
+			animation-timeline: view();
+			animation-range: entry 8% cover 26%;
+		}
+
+		/*
+			Stagger. Scroll timelines ignore animation-delay (there is no clock),
+			so each child is given a slightly longer range instead — later
+			children finish further up the scroll, which reads as a wave.
+		*/
+		.reveal-group > :nth-child(2) {
+			animation-range: entry 8% cover 31%;
+		}
+		.reveal-group > :nth-child(3) {
+			animation-range: entry 8% cover 36%;
+		}
+		.reveal-group > :nth-child(4) {
+			animation-range: entry 8% cover 41%;
+		}
+		.reveal-group > :nth-child(n + 5) {
+			animation-range: entry 8% cover 46%;
+		}
+	}
+}
+
+/* Reading-position indicator in the header. Tied directly to scroll offset
+   rather than being decorative, so it is not gated on reduced-motion. */
+@keyframes scroll-progress-grow {
+	from {
+		transform: scaleX(0);
+	}
+	to {
+		transform: scaleX(1);
+	}
+}
+
+/* Collapsed by default: browsers without scroll timelines simply never show
+   the bar, rather than showing a permanently full one. Set with `transform`
+   (not Tailwind's `scale-*`, which writes the separate `scale` property and
+   would multiply against the keyframe). */
+.scroll-progress {
+	transform: scaleX(0);
+	transform-origin: 0 50%;
+}
+
+@supports (animation-timeline: scroll()) {
+	.scroll-progress {
+		animation: scroll-progress-grow linear;
+		animation-timeline: scroll(root block);
+	}
+}
+
+/* ---------------------------------------------------------------------------
+   Neon offer card
+   ---------------------------------------------------------------------------
+   Reserved for the single headline plan. A static glow is always applied, so
+   the card still reads as special when motion is suppressed; only the pulse
+   is opt-in via prefers-reduced-motion.
+--------------------------------------------------------------------------- */
+@keyframes neon-pulse {
+	0%,
+	100% {
+		box-shadow:
+			0 0 0 1px color-mix(in oklab, var(--primary) 55%, transparent),
+			0 0 22px -6px var(--primary),
+			0 0 48px -14px var(--accent);
+	}
+	50% {
+		box-shadow:
+			0 0 0 1px color-mix(in oklab, var(--primary) 85%, transparent),
+			0 0 36px -4px var(--primary),
+			0 0 74px -10px var(--accent);
+	}
+}
+
+.neon-card {
+	box-shadow:
+		0 0 0 1px color-mix(in oklab, var(--primary) 55%, transparent),
+		0 0 26px -6px var(--primary),
+		0 0 56px -14px var(--accent);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+	.neon-card {
+		animation: neon-pulse 3.2s ease-in-out infinite;
+	}
+}
+
+/* Ribbon on the neon card. Kept legible on its own fill rather than relying
+   on the glow behind it. */
+.neon-tag {
+	box-shadow:
+		0 0 14px -2px var(--primary),
+		0 0 28px -6px var(--accent);
+}
+
+/* ---------------------------------------------------------------------------
+   Free-trial neon (green)
+   ---------------------------------------------------------------------------
+   Same contract as the blue offer card: a static glow always applies so the
+   control still reads as special without motion; only the pulse is gated.
+--------------------------------------------------------------------------- */
+@keyframes neon-green-pulse {
+	0%,
+	100% {
+		box-shadow:
+			0 0 0 1px var(--trial-ring),
+			0 0 18px -5px var(--trial-fill),
+			0 0 40px -12px var(--trial-fill);
+	}
+	50% {
+		box-shadow:
+			0 0 0 1px var(--trial-ring),
+			0 0 30px -3px var(--trial-fill),
+			0 0 62px -8px var(--trial-fill);
+	}
+}
+
+.neon-green {
+	box-shadow:
+		0 0 0 1px var(--trial-ring),
+		0 0 22px -5px var(--trial-fill),
+		0 0 48px -12px var(--trial-fill);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+	.neon-green {
+		animation: neon-green-pulse 2.8s ease-in-out infinite;
+	}
+}

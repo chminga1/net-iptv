@@ -1,0 +1,68 @@
+---
+import { ArrowRight, Plus } from '@lucide/astro';
+import { faqs } from '../data/site';
+import Button from './ui/Button.astro';
+import SectionHeading from './ui/SectionHeading.astro';
+
+interface Props {
+	/** Dedicated pages state the title in <PageHeader>, so they pass false. */
+	showHeading?: boolean;
+	/** Show only the first N questions; omit to show every one. */
+	limit?: number;
+}
+
+const { showHeading = true, limit } = Astro.props;
+const shown = limit ? faqs.slice(0, limit) : faqs;
+
+// This component renders on the home page and on /faq. Linking /faq to itself
+// would be a dead control, so the CTA only appears away from that route.
+const onFaqPage = Astro.url.pathname.replace(/\/+$/, '') === '/faq';
+---
+
+{/* Native <details>/<summary> — accessible and keyboard-operable, zero JS. */}
+<section id="faq" class="relative bg-bg-subtle py-20 lg:py-28">
+	<div class="mx-auto max-w-3xl px-5 sm:px-8">
+		{
+			showHeading && (
+			<SectionHeading
+				eyebrow="FAQ"
+				title="Questions, "
+				accent="answered"
+			/>
+			)
+		}
+
+		<div class:list={['reveal-group space-y-3', showHeading && 'mt-12']}>
+			{
+				shown.map((faq) => (
+					<details class="group rounded-xl border border-border bg-surface transition-colors duration-300 hover:border-primary/50 open:border-primary/50">
+						<summary class="flex cursor-pointer list-none items-center justify-between gap-4 p-5 text-left text-sm font-semibold text-fg [&::-webkit-details-marker]:hidden">
+							{faq.question}
+							<Plus
+								class="h-4 w-4 shrink-0 text-link transition-transform duration-300 group-open:rotate-45"
+								aria-hidden="true"
+							/>
+						</summary>
+						<p class="px-5 pb-5 text-sm leading-relaxed text-fg-muted">
+							{faq.answer}
+						</p>
+					</details>
+				))
+			}
+		</div>
+
+		{
+			!onFaqPage && (
+				<div class="mt-12 text-center">
+					<Button href="/faq" variant="secondary" class="group">
+						See all FAQ
+						<ArrowRight
+							class="h-4 w-4 transition-transform group-hover:translate-x-1"
+							aria-hidden="true"
+						/>
+					</Button>
+				</div>
+			)
+		}
+	</div>
+</section>

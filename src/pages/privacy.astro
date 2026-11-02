@@ -1,0 +1,103 @@
+---
+import LegalLayout from '../layouts/LegalLayout.astro';
+import type { LegalSection } from '../layouts/LegalLayout.astro';
+
+// PLACEHOLDER COPY — plausible wording, not legal advice.
+// Have a qualified lawyer review and adapt this before the site goes live.
+const lastUpdated = 'September 17, 2026';
+
+const sections: readonly LegalSection[] = [
+	{
+		id: 'overview',
+		heading: '1. Overview',
+		body: [
+			'This policy explains what personal data NovaIPTV collects, why we collect it, how long we keep it and the rights you have over it.',
+			'We collect the minimum needed to sell and deliver a streaming subscription. We do not sell personal data to third parties.',
+		],
+	},
+	{
+		id: 'collect',
+		heading: '2. Data we collect',
+		body: [
+			'Account data: the email address you provide at checkout, your chosen plan and your subscription status.',
+			'Payment data: processed by our payment provider. We receive a transaction reference and the last four digits of the card; we never see or store full card numbers.',
+			'Technical data: IP address, device type and player version, recorded when your device connects to our servers. This is used to enforce the simultaneous-connection limit on your plan and to diagnose streaming faults.',
+			'Support data: the contents of messages you send us by email, live chat or WhatsApp.',
+		],
+	},
+	{
+		id: 'why',
+		heading: '3. Why we process it',
+		body: [
+			'To perform our contract with you: creating credentials, delivering the stream, handling billing and processing refunds.',
+			'For our legitimate interests: preventing credential sharing and fraud, monitoring service quality and improving our infrastructure.',
+			'To meet legal obligations: retaining transaction records for tax and accounting purposes.',
+		],
+	},
+	{
+		id: 'cookies',
+		heading: '4. Cookies and analytics',
+		body: [
+			'This website uses strictly necessary cookies to keep your session working. Any analytics or advertising cookies are set only after you consent, and you can withdraw that consent at any time from your browser settings.',
+		],
+	},
+	{
+		id: 'sharing',
+		heading: '5. Who we share data with',
+		body: [
+			'Payment processors, to take payment and issue refunds. Hosting and CDN providers, to deliver the service. Support tooling, to handle your messages.',
+			'Each processor is bound by contract to use the data only on our instructions. We also disclose data where we are legally required to do so.',
+		],
+	},
+	{
+		id: 'retention',
+		heading: '6. How long we keep it',
+		body: [
+			'Account data is retained for as long as your subscription is active and for 24 months afterwards, so that we can reinstate an account or resolve a billing dispute.',
+			'Connection logs are retained for 30 days. Financial records are retained for the period required by applicable tax law.',
+		],
+	},
+	{
+		id: 'rights',
+		heading: '7. Your rights',
+		body: [
+			'Depending on where you live, you may have the right to access, correct, export or delete your personal data, to object to certain processing, and to lodge a complaint with your data protection authority.',
+			'To exercise any of these, email privacy@novaiptv.example. We respond within 30 days and may ask you to verify your identity first.',
+		],
+	},
+	{
+		id: 'security',
+		heading: '8. Security',
+		body: [
+			'Traffic to this site and to our panel is encrypted in transit. Access to subscriber records is restricted to staff who need it, and credentials are stored using industry-standard hashing.',
+			'No system is perfectly secure. If a breach affects your personal data we will notify you and the relevant authority as required by law.',
+		],
+	},
+	{
+		id: 'children',
+		heading: '9. Children',
+		body: [
+			'The service is not directed at children under 16 and we do not knowingly collect their data. Parents who believe a child has provided us with personal data should contact us and we will delete it.',
+		],
+	},
+	{
+		id: 'contact',
+		heading: '10. Contacting us',
+		body: [
+			'Privacy questions and data requests go to privacy@novaiptv.example, or through any channel on our contact page.',
+		],
+	},
+];
+---
+
+<LegalLayout
+	title="Privacy Policy | NovaIPTV"
+	description="What data NovaIPTV collects, why we process it, how long we keep it and the rights you have over it."
+	pageTitle="Privacy "
+	accent="Policy"
+	lastUpdated={lastUpdated}
+	notice="this wording ships with the theme and describes a typical setup. A privacy policy must reflect what your own stack actually collects — review it with a lawyer before launch."
+	sections={sections}
+	ctaHeading="Want your data removed?"
+	ctaBody="Send us a request and we will confirm within 30 days."
+/>

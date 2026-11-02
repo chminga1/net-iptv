@@ -1,0 +1,101 @@
+---
+import { Check, Sparkles } from '@lucide/astro';
+import type { Plan } from '../../data/site';
+import { site, whatsappLink } from '../../data/site';
+import Button from './Button.astro';
+
+interface Props {
+	plan: Plan;
+}
+
+const { plan } = Astro.props;
+const isNeon = plan.neon === true;
+---
+
+<article
+	class:list={[
+		'relative flex h-full flex-col rounded-card border p-7 transition-all duration-300 hover:-translate-y-1',
+		isNeon
+			? 'neon-card border-primary/70 bg-surface'
+			: plan.highlight
+				? 'border-primary/60 bg-surface shadow-[0_0_50px_-12px_var(--primary)]'
+				: 'border-border bg-surface hover:border-primary/50',
+	]}
+>
+	{
+		plan.tag && (
+			<span
+				class:list={[
+					'absolute -top-3 left-1/2 -translate-x-1/2 rounded-full px-3 py-1 text-[0.7rem] font-bold whitespace-nowrap',
+					isNeon
+						? 'neon-tag flex items-center gap-1.5 bg-gradient-to-r from-[var(--brand-600)] to-[var(--accent-600)] text-white'
+						: plan.highlight
+							? 'bg-primary text-on-primary'
+							: 'border border-accent/25 bg-surface-raised text-accent',
+				]}
+			>
+				{isNeon && <Sparkles class="h-3 w-3" aria-hidden="true" />}
+				{plan.tag}
+			</span>
+		)
+	}
+
+	<h3 class="text-sm font-semibold tracking-wide text-fg-muted uppercase">
+		{plan.name}
+	</h3>
+
+	<p class="mt-4 flex flex-wrap items-baseline gap-x-1">
+		<span class="text-2xl font-bold text-fg-muted">{site.currency}</span>
+		<span class="text-4xl font-black tracking-tight text-fg">{plan.price}</span>
+		<span class="text-sm whitespace-nowrap text-fg-subtle">{plan.per}</span>
+	</p>
+	<p
+		class:list={[
+			'mt-2 text-sm',
+			isNeon ? 'font-semibold text-link' : 'text-fg-subtle',
+		]}
+	>
+		{plan.note}
+	</p>
+
+	<ul class="mt-7 grow space-y-3">
+		{
+			plan.features.map((feature, index) => (
+				<li
+					class:list={[
+						'flex items-start gap-3 text-sm',
+						/* The free-months line is the reason to pick this plan. */
+						isNeon && index === 0
+							? 'font-semibold text-fg'
+							: 'text-fg-muted',
+					]}
+				>
+					<span
+						class:list={[
+							'mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full',
+							isNeon && index === 0
+								? 'bg-gradient-to-br from-[var(--brand-500)] to-[var(--accent-500)] text-white'
+								: 'bg-primary/15 text-link',
+						]}
+					>
+						<Check class="h-3.5 w-3.5" aria-hidden="true" />
+					</span>
+					<span>{feature}</span>
+				</li>
+			))
+		}
+	</ul>
+
+	<Button
+		href={whatsappLink(
+			`Hi! I'd like the ${plan.name} plan (${site.currency}${plan.price}).`,
+		)}
+		external
+		variant={plan.highlight ? 'primary' : 'secondary'}
+		class="mt-8"
+		full
+		aria-label={`Choose the ${plan.name} plan`}
+	>
+		Get started
+	</Button>
+</article>

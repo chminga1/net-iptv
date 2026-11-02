@@ -1,0 +1,119 @@
+---
+import { Check } from '@lucide/astro';
+import { whatsappLink } from '../data/site';
+import Button from './ui/Button.astro';
+import Card from './ui/Card.astro';
+import SectionHeading from './ui/SectionHeading.astro';
+
+const reasons = [
+	{ title: 'Ultra fast servers', description: 'Global 20 Gbps network with automatic failover.' },
+	{ title: '4K / FHD / SD quality', description: 'Pick the bitrate that suits your connection.' },
+	{ title: '24/7 customer support', description: 'Live chat and WhatsApp, answered in minutes.' },
+	{ title: 'All devices compatibility', description: 'Smart TV, mobile, Fire Stick, MAG, desktop and consoles.' },
+	{ title: '7-day money-back guarantee', description: 'Not happy? Full refund, no questions asked.' },
+];
+
+const steps = [
+	{
+		number: '1',
+		title: 'Place Your Order',
+		description: 'Choose the plan that fits you and check out securely in under a minute.',
+	},
+	{
+		number: '2',
+		title: 'Receive Your Details',
+		description: 'Credentials and a setup guide land in your inbox within 60 seconds.',
+	},
+	{
+		number: '3',
+		title: 'Start Streaming',
+		description: 'Sign in on any device and the full library is there waiting.',
+	},
+];
+---
+
+<section class="relative bg-bg py-20 lg:py-28">
+	<div class="mx-auto max-w-7xl px-5 sm:px-8">
+		{/* Stacked: "How it works" reads as the step that follows "The difference". */}
+		<div class="space-y-16 lg:space-y-24">
+			<div>
+				<SectionHeading
+					eyebrow="The difference"
+					title="Why "
+					accent="us?"
+					description="Everything we promise is measurable — speed, uptime, response time and a refund policy that puts the risk on us, not you."
+					align="left"
+				/>
+
+				<ul class="reveal-group mt-9 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+					{
+						reasons.map((reason) => (
+							<li class="flex items-start gap-4 rounded-xl border border-border bg-surface p-4 transition-colors duration-300 hover:border-primary/50">
+								<span class="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-[var(--brand-500)] to-[var(--accent-500)]">
+									<Check
+										class="h-3.5 w-3.5 text-white"
+										stroke-width={3.5}
+										aria-hidden="true"
+									/>
+								</span>
+								<div>
+									<h3 class="text-sm font-bold text-fg">{reason.title}</h3>
+									<p class="mt-1 text-sm text-fg-muted">{reason.description}</p>
+								</div>
+							</li>
+						))
+					}
+				</ul>
+			</div>
+
+			<div>
+				<SectionHeading
+					eyebrow="How it works"
+					title="Streaming in "
+					accent="3 steps"
+					description="No installers, no contracts, no waiting on a technician."
+					align="left"
+				/>
+
+				<ol class="reveal-group mt-9 grid gap-5 lg:grid-cols-3">
+					{
+						steps.map((step) => (
+							<Card as="li" class="group p-6">
+								<div class="flex items-start gap-5">
+									<span class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border border-primary/30 bg-primary/10 text-xl font-black text-link transition-all duration-300 group-hover:bg-primary group-hover:text-on-primary">
+										{step.number}
+									</span>
+									<div>
+										<h3 class="text-lg font-bold text-fg">{step.title}</h3>
+										<p class="mt-2 text-sm leading-relaxed text-fg-muted">
+											{step.description}
+										</p>
+									</div>
+								</div>
+							</Card>
+						))
+					}
+				</ol>
+
+				{/*
+					Its own block below the steps, with a rule above it. Step 1 is
+					also titled "Place Your Order", so without the separation the
+					button reads as part of that card rather than the section's
+					closing action.
+				*/}
+				<div class="mt-10 border-t border-border pt-8 text-center">
+					<Button
+						href={whatsappLink('Hi! I would like to place an order.')}
+						external
+						class="w-full sm:w-auto"
+					>
+						Place Your Order
+					</Button>
+					<p class="mt-3 text-xs text-fg-subtle">
+						Instant activation · Cancel anytime
+					</p>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>

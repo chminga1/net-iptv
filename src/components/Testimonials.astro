@@ -1,0 +1,73 @@
+---
+import { Star } from '@lucide/astro';
+import Card from './ui/Card.astro';
+import SectionHeading from './ui/SectionHeading.astro';
+
+const reviews = [
+	{
+		name: 'Marcus T.',
+		location: 'Manchester, UK',
+		initials: 'MT',
+		quote:
+			'Switched from cable six months ago and never looked back. Premier League in 4K with no lag, and the picture holds up even on match night.',
+	},
+	{
+		name: 'Sofia L.',
+		location: 'Stockholm, SE',
+		initials: 'SL',
+		quote:
+			'Setup took me four minutes on my Fire Stick. Support walked me through it on chat at 11pm — genuinely impressive service.',
+	},
+	{
+		name: 'David R.',
+		location: 'Toronto, CA',
+		initials: 'DR',
+		quote:
+			'The VOD library is enormous and new releases show up fast. Four devices on the yearly plan covers the whole family.',
+	},
+];
+---
+
+<section class="relative bg-bg-subtle py-20 lg:py-28">
+	<div class="mx-auto max-w-7xl px-5 sm:px-8">
+		<SectionHeading
+			eyebrow="Customers"
+			title="Trusted by "
+			accent="thousands of homes"
+		/>
+
+		<ul class="reveal-group mt-14 grid gap-6 lg:grid-cols-3">
+			{
+				reviews.map((review) => (
+					<Card as="li" class="flex h-full flex-col p-7">
+						<div class="flex gap-0.5" aria-label="Rated 5 out of 5">
+							{Array.from({ length: 5 }).map(() => (
+								<Star
+									class="h-4 w-4 text-amber-400"
+									fill="currentColor"
+									aria-hidden="true"
+								/>
+							))}
+						</div>
+						<blockquote class="mt-5 grow text-sm leading-relaxed text-fg-muted">
+							“{review.quote}”
+						</blockquote>
+						<figcaption class="mt-6 flex items-center gap-3 border-t border-border pt-5">
+							<span class="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-[var(--brand-500)] to-[var(--accent-500)] text-xs font-bold text-white">
+								{review.initials}
+							</span>
+							<span>
+								<span class="block text-sm font-semibold text-fg">
+									{review.name}
+								</span>
+								<span class="block text-xs text-fg-subtle">
+									{review.location}
+								</span>
+							</span>
+						</figcaption>
+					</Card>
+				))
+			}
+		</ul>
+	</div>
+</section>

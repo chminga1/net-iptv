@@ -1,0 +1,139 @@
+---
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+import { ArrowRight, Play } from '@lucide/astro';
+import Button from './ui/Button.astro';
+import SectionHeading from './ui/SectionHeading.astro';
+
+import barbie from '../assets/posters/barbie.webp';
+import libraryGrid from '../assets/posters/library-grid.jpg';
+import dunePartTwo from '../assets/posters/dune-part-two.webp';
+import granTurismo from '../assets/posters/gran-turismo.webp';
+import johnWick4 from '../assets/posters/john-wick-4.webp';
+import oppenheimer from '../assets/posters/oppenheimer.webp';
+import theCreator from '../assets/posters/the-creator.webp';
+
+interface Movie {
+	readonly title: string;
+	readonly meta: string;
+	readonly badge: string;
+	readonly poster: ImageMetadata;
+}
+
+const movies: readonly Movie[] = [
+	{ title: 'The Creator', meta: '2023 · Sci-Fi', badge: '4K', poster: theCreator },
+	{ title: 'Oppenheimer', meta: '2023 · Drama', badge: 'IMAX', poster: oppenheimer },
+	{ title: 'John Wick 4', meta: '2023 · Thriller', badge: 'HDR', poster: johnWick4 },
+	{ title: 'Gran Turismo', meta: '2023 · Action', badge: '4K', poster: granTurismo },
+	{ title: 'Dune: Part Two', meta: '2024 · Sci-Fi', badge: '4K', poster: dunePartTwo },
+	{ title: 'Barbie', meta: '2023 · Comedy', badge: '4K', poster: barbie },
+];
+---
+
+<section id="movies" class="relative bg-bg py-20 lg:py-28">
+	<div class="mx-auto max-w-7xl px-5 sm:px-8">
+		<div class="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
+			<SectionHeading
+				eyebrow="On demand"
+				title="A library that keeps "
+				accent="growing"
+				align="left"
+			/>
+			<Button href="/pricing" variant="secondary" size="sm" class="group shrink-0">
+				Browse plans
+				<ArrowRight
+					class="h-4 w-4 transition-transform group-hover:translate-x-1"
+					aria-hidden="true"
+				/>
+			</Button>
+		</div>
+
+		<ul class="no-scrollbar mt-12 flex snap-x snap-mandatory gap-5 overflow-x-auto pb-4">
+			{
+				movies.map((movie) => (
+					<li class="group w-44 shrink-0 snap-start sm:w-52">
+						<div class="relative aspect-2/3 overflow-hidden rounded-xl border border-border transition-all duration-300 group-hover:-translate-y-1 group-hover:border-primary/50">
+							{/*
+								Poster art is decorative here — the title and meta sit in
+								text directly below, so an alt would just repeat them.
+								Rendered at card width (not full size) and lazy, since the
+								rail sits well below the fold.
+							*/}
+							<Image
+								src={movie.poster}
+								alt=""
+								widths={[208, 416]}
+								sizes="(min-width: 640px) 208px, 176px"
+								loading="lazy"
+								decoding="async"
+								aria-hidden="true"
+								class="h-full w-full object-cover"
+							/>
+
+							{/* Scrim so the badge stays readable on light poster art. */}
+							<span
+								class="pointer-events-none absolute inset-x-0 top-0 h-16 bg-gradient-to-b from-black/50 to-transparent"
+								aria-hidden="true"
+							/>
+
+							<span class="absolute top-3 right-3 rounded-md bg-black/70 px-2 py-0.5 text-[0.65rem] font-bold text-white backdrop-blur-sm">
+								{movie.badge}
+							</span>
+
+							<span class="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+								<span class="flex h-12 w-12 items-center justify-center rounded-full bg-primary text-on-primary">
+									<Play class="h-5 w-5" fill="currentColor" aria-hidden="true" />
+								</span>
+							</span>
+						</div>
+						<h3 class="mt-3 truncate text-sm font-semibold text-fg">
+							{movie.title}
+						</h3>
+						<p class="text-xs text-fg-subtle">{movie.meta}</p>
+					</li>
+				))
+			}
+
+			{/*
+				Closing tile: the rail is a teaser, so the last card says how much
+				more there is and links to plans. Same 2:3 frame and the same two
+				text lines beneath as the posters, so the row stays aligned.
+			*/}
+			<li class="group w-44 shrink-0 snap-start sm:w-52">
+				<a href="/pricing" class="block">
+					<div class="relative aspect-2/3 overflow-hidden rounded-xl border border-border transition-all duration-300 group-hover:-translate-y-1 group-hover:border-primary/50">
+						<Image
+							src={libraryGrid}
+							alt=""
+							widths={[208, 416]}
+							sizes="(min-width: 640px) 208px, 176px"
+							loading="lazy"
+							decoding="async"
+							aria-hidden="true"
+							class="h-full w-full object-cover"
+						/>
+
+						{/* Strong scrim: the collage is busy, so the count needs a base. */}
+						<span
+							class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/70 to-black/50"
+							aria-hidden="true"
+						></span>
+
+						<span class="absolute inset-0 flex flex-col items-center justify-center gap-3 p-4 text-center">
+							<span class="text-balance text-sm font-bold leading-snug text-white">
+								+ more than 23,000 series and films
+							</span>
+							<span class="flex h-9 w-9 items-center justify-center rounded-full bg-primary text-on-primary transition-transform duration-300 group-hover:scale-110">
+								<ArrowRight class="h-4 w-4" aria-hidden="true" />
+							</span>
+						</span>
+					</div>
+					<h3 class="mt-3 truncate text-sm font-semibold text-fg">
+						Browse the full library
+					</h3>
+					<p class="text-xs text-fg-subtle">Included in every plan</p>
+				</a>
+			</li>
+		</ul>
+	</div>
+</section>

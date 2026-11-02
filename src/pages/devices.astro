@@ -1,0 +1,123 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import PageHeader from '../components/PageHeader.astro';
+import LeaguesDevices from '../components/LeaguesDevices.astro';
+import Footer from '../components/Footer.astro';
+import Badge from '../components/ui/Badge.astro';
+import Button from '../components/ui/Button.astro';
+import Card from '../components/ui/Card.astro';
+import SectionHeading from '../components/ui/SectionHeading.astro';
+
+interface Setup {
+	readonly platform: string;
+	readonly time: string;
+	readonly steps: readonly string[];
+}
+
+const setups: readonly Setup[] = [
+	{
+		platform: 'Smart TV (Samsung / LG)',
+		time: '3 min',
+		steps: [
+			'Open the app store on your TV and install Smart IPTV or IBO Player.',
+			'Note the MAC address the app displays on first launch.',
+			'Send that MAC address to our support chat and we activate the device.',
+			'Restart the app — your full channel list loads automatically.',
+		],
+	},
+	{
+		platform: 'Amazon Fire Stick',
+		time: '4 min',
+		steps: [
+			'From Settings → My Fire TV → Developer Options, enable apps from unknown sources.',
+			'Install the Downloader app and enter the link from your welcome email.',
+			'Open the installed player and sign in with your username and password.',
+			'Pick a category and start watching.',
+		],
+	},
+	{
+		platform: 'Android & iOS',
+		time: '2 min',
+		steps: [
+			'Install IBO Pro Player or IBO Player from Google Play or the App Store.',
+			'Open the app and send us a screenshot of your MAC address and device ID — we add the playlist to your device for you.',
+			'The library syncs in a few seconds and is ready on mobile data or Wi-Fi.',
+		],
+	},
+	{
+		platform: 'MAG Box & Windows / macOS',
+		time: '5 min',
+		steps: [
+			'On MAG, go to Settings → Servers → Portals and enter the portal URL we sent you.',
+			'On desktop, install VLC or MyIPTV Player and load the M3U playlist link.',
+			'Reboot the device so the portal refreshes.',
+			'Channels, movies and series appear under separate tabs.',
+		],
+	},
+];
+---
+
+<Layout
+	title="Supported Devices & Setup Guides | NovaIPTV"
+	description="Step-by-step setup for Smart TV, Fire Stick, Android, iOS, MAG boxes, Windows, macOS and games consoles."
+>
+	<Header />
+	<main id="main">
+		<PageHeader
+			eyebrow="Compatibility"
+			title="Works on the devices "
+			accent="you already own"
+			description="One subscription, every screen in the house. Most people are watching within five minutes of checkout."
+		/>
+
+		<LeaguesDevices />
+
+		<section class="relative overflow-clip bg-bg-subtle py-20 lg:py-28">
+			<div
+				class="pointer-events-none absolute top-0 left-1/2 h-80 w-[40rem] -translate-x-1/2 rounded-full bg-primary/10 blur-[120px]"
+				aria-hidden="true"
+			>
+			</div>
+
+			<div class="relative mx-auto max-w-7xl px-5 sm:px-8">
+				<SectionHeading
+					eyebrow="Setup guides"
+					title="Installed in "
+					accent="five minutes"
+					description="Pick your platform and follow the steps. Support can screen-share if you would rather we did it with you."
+				/>
+
+				<ul class="reveal-group mt-14 grid gap-6 lg:grid-cols-2">
+					{
+						setups.map((setup) => (
+							<Card as="li" class="p-7">
+								<div class="flex items-center justify-between gap-4">
+									<h3 class="text-lg font-bold text-fg">{setup.platform}</h3>
+									<Badge class="shrink-0">{setup.time}</Badge>
+								</div>
+								<ol class="mt-6 space-y-4">
+									{setup.steps.map((step, index) => (
+										<li class="flex items-start gap-4">
+											<span class="flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-primary/30 bg-primary/10 text-xs font-black text-link">
+												{index + 1}
+											</span>
+											<p class="text-sm leading-relaxed text-fg-muted">{step}</p>
+										</li>
+									))}
+								</ol>
+							</Card>
+						))
+					}
+				</ul>
+
+				<div class="mt-14 text-center">
+					<Button href="/contact" variant="secondary">
+						Need a hand? Talk to support
+					</Button>
+				</div>
+			</div>
+		</section>
+	</main>
+	<Footer />
+</Layout>

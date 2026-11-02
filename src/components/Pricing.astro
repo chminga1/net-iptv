@@ -1,0 +1,44 @@
+---
+import { plans, guarantees } from '../data/site';
+import PricingCard from './ui/PricingCard.astro';
+import SectionHeading from './ui/SectionHeading.astro';
+
+interface Props {
+	/** Dedicated pages state the title in <PageHeader>, so they pass false. */
+	showHeading?: boolean;
+}
+
+const { showHeading = true } = Astro.props;
+---
+
+<section id="pricing" class="relative overflow-clip bg-bg py-20 lg:py-28">
+	<div
+		class="pointer-events-none absolute bottom-0 left-1/2 h-80 w-[40rem] -translate-x-1/2 rounded-full bg-accent/10 blur-[120px]"
+		aria-hidden="true"
+	>
+	</div>
+
+	<div class="relative mx-auto max-w-7xl px-5 sm:px-8">
+		{
+			showHeading && (
+			<SectionHeading
+				eyebrow="Plans"
+				title="Simple pricing, "
+				accent="no surprises"
+				description="Every plan carries the full library. Pick the term that suits you — the longer the term, the lower the monthly cost."
+			/>
+			)
+		}
+
+		<div
+			class:list={[
+				'reveal-group grid gap-6 sm:grid-cols-2 lg:grid-cols-4',
+				showHeading && 'mt-14',
+			]}
+		>
+			{plans.map((plan) => <PricingCard plan={plan} />)}
+		</div>
+
+		<p class="mt-10 text-center text-sm text-fg-subtle">{guarantees}</p>
+	</div>
+</section>

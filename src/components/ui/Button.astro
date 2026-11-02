@@ -1,0 +1,72 @@
+---
+/**
+ * Renders an <a> when `href` is given, otherwise a <button>, so callers never
+ * have to pick the element by hand. Size floors at 44px tall (WCAG 2.5.8).
+ */
+interface Props {
+	href?: string;
+	type?: 'button' | 'submit';
+	variant?: 'primary' | 'secondary' | 'ghost' | 'trial';
+	size?: 'sm' | 'md' | 'lg';
+	class?: string;
+	full?: boolean;
+	external?: boolean;
+	'aria-label'?: string;
+}
+
+const {
+	href,
+	type = 'button',
+	variant = 'primary',
+	size = 'md',
+	class: className = '',
+	full = false,
+	external = false,
+	...rest
+} = Astro.props;
+
+const base =
+	'inline-flex items-center justify-center gap-2 rounded-full font-semibold cursor-pointer transition-all duration-200 ease-out disabled:pointer-events-none disabled:opacity-50';
+
+const variants: Record<NonNullable<Props['variant']>, string> = {
+	primary:
+		'bg-primary text-on-primary glow-primary hover:bg-primary-hover hover:-translate-y-0.5 hover:glow-primary-hover',
+	secondary:
+		'glass border text-fg hover:-translate-y-0.5 hover:border-primary/50 hover:text-fg',
+	ghost: 'text-fg-muted hover:bg-surface-raised hover:text-fg',
+	/* Free-trial CTA: bright green with near-black label and a neon halo. */
+	trial:
+		'neon-green bg-trial-fill text-trial-on-fill hover:-translate-y-0.5 hover:brightness-110',
+};
+
+const sizes: Record<NonNullable<Props['size']>, string> = {
+	sm: 'min-h-11 px-4 py-2 text-sm',
+	md: 'min-h-11 px-6 py-3 text-sm',
+	lg: 'min-h-12 px-8 py-4 text-base',
+};
+
+const classes = [
+	base,
+	variants[variant],
+	sizes[size],
+	full ? 'w-full' : '',
+	className,
+].join(' ');
+---
+
+{
+	href ? (
+		<a
+			href={href}
+			class={classes}
+			{...(external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+			{...rest}
+		>
+			<slot />
+		</a>
+	) : (
+		<button type={type} class={classes} {...rest}>
+			<slot />
+		</button>
+	)
+}

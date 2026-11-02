@@ -1,0 +1,168 @@
+---
+import { ChevronDown, Menu, Play, X } from '@lucide/astro';
+import { moreLinks, navLinks, site, whatsappLink } from '../data/site';
+import Button from './ui/Button.astro';
+
+// `astro build` emits /features/ while `astro dev` serves /features.
+const current = Astro.url.pathname.replace(/\/+$/, '') || '/';
+const isActive = (href: string): boolean =>
+	href === '/' ? current === '/' : current === href;
+const moreIsActive = moreLinks.some((link) => isActive(link.href));
+
+const underline =
+	'absolute -bottom-1.5 left-0 h-0.5 w-full rounded-full bg-gradient-to-r from-[var(--brand-500)] to-[var(--accent-500)]';
+---
+
+<header class="sticky top-0 z-50 border-b border-border glass">
+	{/*
+		Reading-position bar. Scales with document scroll via a pure CSS scroll
+		timeline; decorative, so it is hidden from assistive tech.
+	*/}
+	<div
+		class="scroll-progress absolute inset-x-0 bottom-0 h-0.5 bg-gradient-to-r from-[var(--brand-500)] to-[var(--accent-500)]"
+		aria-hidden="true"
+	>
+	</div>
+
+	<div
+		class="mx-auto flex h-16 max-w-7xl items-center justify-between gap-4 px-5 sm:px-8"
+	>
+		<a
+			href="/"
+			class="flex shrink-0 items-center gap-2.5"
+			aria-label={`${site.name} home`}
+		>
+			<span
+				class="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-[var(--brand-500)] to-[var(--accent-500)] shadow-lg shadow-primary/30"
+			>
+				<Play class="h-4 w-4 text-white" fill="currentColor" aria-hidden="true" />
+			</span>
+			<span class="text-base font-bold tracking-tight text-fg">
+				Nova<span class="text-link">IPTV</span>
+			</span>
+		</a>
+
+		<nav class="hidden items-center gap-6 lg:flex" aria-label="Main">
+			{
+				navLinks.map((link) => (
+					<a
+						href={link.href}
+						aria-current={isActive(link.href) ? 'page' : undefined}
+						class:list={[
+							'relative text-sm font-medium transition-colors',
+							isActive(link.href)
+								? 'text-fg'
+								: 'text-fg-muted hover:text-fg',
+						]}
+					>
+						{link.label}
+						{isActive(link.href) && <span class={underline} aria-hidden="true" />}
+					</a>
+				))
+			}
+
+			{/*
+				No client-side JS: `group-hover` covers pointers and
+				`group-focus-within` covers keyboard and touch. The panel wrapper
+				carries the top padding so there is no un-hoverable gap.
+			*/}
+			<div class="group relative">
+				<button
+					type="button"
+					aria-haspopup="true"
+					class:list={[
+						'relative flex cursor-pointer items-center gap-1.5 text-sm font-medium transition-colors',
+						moreIsActive ? 'text-fg' : 'text-fg-muted hover:text-fg',
+					]}
+				>
+					More
+					<ChevronDown
+						class="h-3.5 w-3.5 transition-transform duration-200 group-hover:rotate-180 group-focus-within:rotate-180"
+						aria-hidden="true"
+					/>
+					{moreIsActive && <span class={underline} aria-hidden="true" />}
+				</button>
+
+				<div
+					class="invisible absolute top-full right-0 z-50 w-56 translate-y-1 pt-4 opacity-0 transition-all duration-200 group-hover:visible group-hover:translate-y-0 group-hover:opacity-100 group-focus-within:visible group-focus-within:translate-y-0 group-focus-within:opacity-100"
+				>
+					<div class="glass rounded-xl border p-2 shadow-2xl">
+						{
+							moreLinks.map((link) => (
+								<a
+									href={link.href}
+									aria-current={isActive(link.href) ? 'page' : undefined}
+									class:list={[
+										'block rounded-lg px-3 py-2.5 text-sm font-medium transition-colors',
+										isActive(link.href)
+											? 'bg-primary/15 text-fg'
+											: 'text-fg-muted hover:bg-surface-raised hover:text-fg',
+									]}
+								>
+									{link.label}
+								</a>
+							))
+						}
+					</div>
+				</div>
+			</div>
+		</nav>
+
+		<div class="flex items-center gap-2">
+
+			<Button
+				href={whatsappLink('Hi! I would like to start the free trial.')}
+				external
+				size="sm"
+				variant="trial"
+				class="hidden sm:inline-flex"
+			>
+				Start free trial
+			</Button>
+
+			{/* Native <details> keeps the mobile menu keyboard-accessible with no JS. */}
+			<details class="group lg:hidden">
+				<summary
+					class="flex h-10 w-10 cursor-pointer list-none items-center justify-center rounded-lg border border-border bg-surface text-fg-muted transition-colors hover:text-fg [&::-webkit-details-marker]:hidden"
+					aria-label="Toggle navigation menu"
+				>
+					<Menu class="h-5 w-5 group-open:hidden" aria-hidden="true" />
+					<X class="hidden h-5 w-5 group-open:block" aria-hidden="true" />
+				</summary>
+
+				<nav
+					class="absolute inset-x-0 top-full border-b border-border bg-bg/95 p-5 shadow-2xl backdrop-blur-xl"
+					aria-label="Mobile"
+				>
+					<div class="mx-auto flex max-w-7xl flex-col gap-1">
+						{
+							[...navLinks, ...moreLinks].map((link) => (
+								<a
+									href={link.href}
+									aria-current={isActive(link.href) ? 'page' : undefined}
+									class:list={[
+										'rounded-lg px-3 py-3 text-sm font-medium transition-colors',
+										isActive(link.href)
+											? 'bg-primary/15 text-fg'
+											: 'text-fg-muted hover:bg-surface-raised hover:text-fg',
+									]}
+								>
+									{link.label}
+								</a>
+							))
+						}
+						<Button
+							href={whatsappLink('Hi! I would like to start the free trial.')}
+							external
+							variant="trial"
+							class="mt-3 sm:hidden"
+							full
+						>
+							Start free trial
+						</Button>
+					</div>
+				</nav>
+			</details>
+		</div>
+	</div>
+</header>

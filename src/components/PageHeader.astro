@@ -1,0 +1,40 @@
+---
+import SectionHeading from './ui/SectionHeading.astro';
+
+/**
+ * Banner for every sub-page. Bottom padding is deliberately small because the
+ * section that follows brings its own top padding; pages whose next section
+ * has none (contact, terms, privacy) add their own `pt-*`.
+ */
+interface Props {
+	eyebrow: string;
+	title: string;
+	accent?: string;
+	description?: string;
+}
+
+const { eyebrow, title, accent, description } = Astro.props;
+---
+
+<section class="relative overflow-clip bg-bg pt-16 pb-8 lg:pt-24 lg:pb-10">
+	<div
+		class="pointer-events-none absolute -top-32 left-1/2 h-80 w-[40rem] -translate-x-1/2 rounded-full bg-primary/15 blur-[120px]"
+		aria-hidden="true"
+	>
+	</div>
+	<div class="pointer-events-none absolute inset-0 bg-grid" aria-hidden="true">
+	</div>
+
+	<div class="relative mx-auto max-w-4xl px-5 sm:px-8">
+		<SectionHeading
+			eyebrow={eyebrow}
+			title={title}
+			accent={accent}
+			description={description}
+			as="h1"
+			class="mx-auto max-w-4xl"
+		>
+			<slot />
+		</SectionHeading>
+	</div>
+</section>

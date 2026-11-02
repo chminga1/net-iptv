@@ -1,0 +1,128 @@
+---
+import { Image } from 'astro:assets';
+import { ArrowRight } from '@lucide/astro';
+import heroBg from '../assets/hero-bg.webp';
+import { guarantees, networks, site, whatsappLink } from '../data/site';
+import Button from './ui/Button.astro';
+---
+
+{/*
+	Height: the header is `sticky h-16`, so it still occupies 4rem of flow
+	space. Subtracting it keeps the hero one viewport tall on first paint.
+	`svh` avoids the mobile browser-chrome jump that `vh` causes.
+*/}
+<section
+	id="top"
+	class="relative isolate flex min-h-[calc(100svh-4rem)] items-center overflow-clip bg-bg"
+>
+	{/*
+		astro:assets emits a responsive srcset and the intrinsic dimensions, so
+		the browser reserves space (CLS) and downloads only the size it needs.
+		Decorative, so alt="" — the headline carries the meaning.
+	*/}
+	<Image
+		src={heroBg}
+		alt=""
+		widths={[640, 960, 1280, 1408]}
+		sizes="100vw"
+		loading="eager"
+		fetchpriority="high"
+		decoding="async"
+		aria-hidden="true"
+		class="absolute inset-0 -z-10 h-full w-full object-cover object-center"
+	/>
+
+	{/*
+		Overlay stack: vertical wash, then a vignette that pushes focus into the
+		centred copy, keeping the photo visible while the text stays legible.
+	*/}
+	<div
+		class="pointer-events-none absolute inset-0 -z-10 bg-gradient-to-t from-[#08090c] via-[#08090c]/70 to-black/40 backdrop-blur-[2px]"
+		aria-hidden="true"
+	>
+	</div>
+	<div
+		class="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(ellipse_70%_60%_at_50%_45%,transparent_0%,rgb(8_9_12/0.35)_60%,rgb(8_9_12/0.9)_100%)]"
+		aria-hidden="true"
+	>
+	</div>
+	<div
+		class="pointer-events-none absolute inset-0 -z-10 bg-grid opacity-60"
+		aria-hidden="true"
+	>
+	</div>
+
+	<div
+		class="relative mx-auto w-full max-w-7xl px-5 py-16 text-center sm:px-8 lg:py-20"
+	>
+		{/* Top-of-page badge: green neon to match the free-trial CTAs. */}
+		<span
+			class="neon-green glass inline-flex items-center gap-2 rounded-full border border-transparent px-4 py-1.5 text-xs font-semibold tracking-wide text-trial-text uppercase"
+		>
+			<span class="relative flex h-2 w-2" aria-hidden="true">
+				<span
+					class="absolute inline-flex h-full w-full animate-ping rounded-full bg-trial-fill opacity-75"
+				></span>
+				<span
+					class="relative inline-flex h-2 w-2 rounded-full bg-trial-fill"
+				></span>
+			</span>
+			Free trial
+		</span>
+
+		<h1
+			class="mx-auto mt-8 max-w-4xl text-4xl font-black tracking-tight text-balance text-fg sm:text-6xl lg:text-7xl"
+		>
+			{site.tagline}
+		</h1>
+
+		<p
+			class="mx-auto mt-6 max-w-2xl text-base leading-8 tracking-wide text-fg-muted text-pretty sm:text-lg sm:leading-9"
+		>
+			{site.description}
+		</p>
+
+		<div class="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
+			<Button
+				href={whatsappLink('Hi! I would like to start the free trial.')}
+				external
+				size="lg"
+				variant="trial"
+				class="group w-full sm:w-auto"
+			>
+				Start free trial
+				<ArrowRight
+					class="h-4 w-4 transition-transform group-hover:translate-x-1"
+					aria-hidden="true"
+				/>
+			</Button>
+			<Button
+				href="/features"
+				size="lg"
+				variant="secondary"
+				class="w-full sm:w-auto"
+			>
+				See Features
+			</Button>
+		</div>
+
+		<p class="mt-6 text-sm text-fg-subtle">{guarantees}</p>
+
+		<div class="mt-14 lg:mt-16">
+			<h2 class="text-xs font-semibold tracking-[0.25em] text-fg-subtle uppercase">
+				All your favourite networks included
+			</h2>
+			<ul
+				class="mx-auto mt-8 grid max-w-5xl grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-7 lg:gap-4"
+			>
+				{
+					networks.map((network) => (
+						<li class="glass flex h-16 items-center justify-center rounded-xl border px-4 transition-colors duration-300 hover:border-primary/50 lg:h-20">
+							<span class={`text-fg-muted ${network.class}`}>{network.name}</span>
+						</li>
+					))
+				}
+			</ul>
+		</div>
+	</div>
+</section>

@@ -1,0 +1,68 @@
+---
+/** Shared eyebrow + headline block so every section keeps the same rhythm. */
+interface Props {
+	eyebrow: string;
+	title: string;
+	accent?: string;
+	description?: string;
+	align?: 'center' | 'left';
+	as?: 'h1' | 'h2';
+	class?: string;
+}
+
+const {
+	eyebrow,
+	title,
+	accent,
+	description,
+	align = 'center',
+	as: Tag = 'h2',
+	class: className = '',
+} = Astro.props;
+
+const isCentered = align === 'center';
+---
+
+<div
+	class:list={[
+		'reveal',
+		isCentered ? 'mx-auto max-w-2xl text-center' : 'max-w-xl',
+		className,
+	]}
+>
+	<span
+		class="text-xs font-semibold tracking-[0.25em] text-accent uppercase"
+	>
+		{eyebrow}
+	</span>
+	<Tag
+		class:list={[
+			'mt-3 font-black tracking-tight text-balance text-fg',
+			Tag === 'h1'
+				? 'text-3xl sm:text-5xl lg:text-6xl'
+				: 'text-3xl sm:text-4xl lg:text-5xl',
+		]}
+	>
+		{title}
+		{
+			accent && (
+				<span class="bg-gradient-to-r from-[var(--brand-500)] to-[var(--accent-500)] bg-clip-text text-transparent">
+					{accent}
+				</span>
+			)
+		}
+	</Tag>
+	{
+		description && (
+			<p
+				class:list={[
+					'mt-4 leading-relaxed text-fg-muted text-pretty',
+					isCentered ? 'mx-auto max-w-2xl' : 'max-w-md',
+				]}
+			>
+				{description}
+			</p>
+		)
+	}
+	<slot />
+</div>

@@ -1,0 +1,85 @@
+---
+import { Image } from 'astro:assets';
+import { Tv } from '@lucide/astro';
+import devicesPhoto from '../assets/devices.jpg';
+import SectionHeading from './ui/SectionHeading.astro';
+
+const leagues = ['MLS', 'NBA', 'NFL', 'MLB', 'NHL'];
+
+const devices = [
+	'Smart TV',
+	'Android',
+	'iPhone & iPad',
+	'Fire Stick',
+	'MAG Box',
+	'Windows & macOS',
+	'Apple TV',
+	'Xbox & PlayStation',
+];
+---
+
+<section class="relative bg-bg py-20 lg:py-28">
+	<div class="mx-auto max-w-7xl px-5 sm:px-8">
+		<div class="text-center">
+			<span class="text-xs font-semibold tracking-[0.25em] text-accent uppercase">
+				Every league
+			</span>
+			<ul
+				class="mt-6 flex flex-wrap items-center justify-center gap-3 sm:gap-4"
+			>
+				{
+					leagues.map((league) => (
+						<li class="rounded-xl border border-border bg-surface px-6 py-3 text-lg font-black tracking-tight text-fg-muted transition-colors duration-300 hover:border-primary/50 hover:text-fg">
+							{league}
+						</li>
+					))
+				}
+			</ul>
+		</div>
+
+		<div class="mt-20 grid items-center gap-12 lg:grid-cols-2 lg:gap-16">
+			{/*
+				A real multi-device photo rather than a faux app window — the copy
+				beside it is about the hardware you already own, so the picture
+				should show hardware. Meaningful, not decorative, so it carries a
+				descriptive alt.
+			*/}
+			<figure class="relative mx-auto w-full max-w-md">
+				<div
+					class="pointer-events-none absolute -inset-4 -z-10 rounded-[2rem] bg-primary/15 blur-3xl"
+					aria-hidden="true"
+				>
+				</div>
+				<Image
+					src={devicesPhoto}
+					alt="A desk with a laptop, tablet, two phones, a smartwatch and wireless earbuds, all able to run the service."
+					widths={[448, 896]}
+					sizes="(min-width: 1024px) 448px, 90vw"
+					loading="lazy"
+					decoding="async"
+					class="w-full rounded-2xl border border-border shadow-2xl"
+				/>
+			</figure>
+
+			<div>
+				<SectionHeading
+					eyebrow="Compatibility"
+					title="Works on the devices "
+					accent="you already own"
+					description="One subscription covers every screen in the house. No proprietary box, no installation visit."
+					align="left"
+				/>
+				<ul class="reveal-group mt-8 grid grid-cols-2 gap-3">
+					{
+						devices.map((device) => (
+							<li class="flex items-center gap-3 rounded-xl border border-border bg-surface px-4 py-3 text-sm text-fg-muted transition-colors duration-300 hover:border-primary/50 hover:text-fg">
+								<Tv class="h-4 w-4 shrink-0 text-link" aria-hidden="true" />
+								{device}
+							</li>
+						))
+					}
+				</ul>
+			</div>
+		</div>
+	</div>
+</section>
