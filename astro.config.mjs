@@ -9,19 +9,13 @@ import sitemap from '@astrojs/sitemap';
 import { satteri } from '@astrojs/markdown-satteri';
 
 import { blogCtaPlugin } from './src/lib/blog-cta-plugin';
+import { sitemapNoindex } from './src/lib/sitemap-noindex';
 
 /**
- * Public origin used for canonical URLs, the sitemap, robots.txt and schema.
- * Set SITE_URL in Vercel (Project → Settings → Environment Variables) to the
- * exact production domain, e.g. https://www.yourdomain.com. Without it, a
- * Vercel build falls back to the project's production domain, and a local
- * build to localhost.
+ * Production origin, used for canonical URLs, the sitemap, robots.txt and
+ * schema. SITE_URL overrides it, e.g. for a staging domain.
  */
-const SITE_URL =
-  process.env.SITE_URL ??
-  (process.env.VERCEL_PROJECT_PRODUCTION_URL
-    ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
-    : 'http://localhost:4321');
+const SITE_URL = process.env.SITE_URL ?? 'https://netiptv.app';
 
 // https://astro.build/config
 export default defineConfig({
@@ -32,12 +26,14 @@ export default defineConfig({
   },
 
   integrations: [
+    // Lists every prerendered page; drafts never build, and API routes are
+    // on-demand so they are never listed.
     sitemap({
-      // Topic archives stay out until they are indexable; see src/pages/blog/topic.
-      filter: (page) => !page.includes('/blog/topic/'),
       // Match the canonical URLs, which never end in a slash (except the root).
       serialize: (item) => ({ ...item, url: item.url.replace(/([^/])\/$/, '$1') }),
     }),
+    // Must follow sitemap(): drops pages that render a robots noindex.
+    sitemapNoindex(),
   ],
 
   markdown: {
