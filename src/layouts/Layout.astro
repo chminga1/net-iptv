@@ -7,15 +7,30 @@ interface Props {
 	description?: string;
 	/** Omit from sitemaps/indexing for thin or legal pages if ever needed. */
 	noindex?: boolean;
+	/** JSON-LD objects, emitted as one array in <head>. */
+	schema?: object | object[];
+	ogType?: 'website' | 'article';
+	/** Absolute URL of the share image. */
+	ogImage?: string;
 }
 
 const {
 	title = `${site.tagline} | ${site.channels} Live Channels in 4K`,
 	description = site.description,
 	noindex = false,
+	schema,
+	ogType = 'website',
+	ogImage,
 } = Astro.props;
 
-const canonical = new URL(Astro.url.pathname, Astro.site ?? Astro.url.origin);
+// Internal links never use a trailing slash, so the canonical drops the one
+// the static build adds (/faq/ → /faq).
+const canonicalPath = Astro.url.pathname.replace(/(.)\/+$/, '$1');
+const canonical = new URL(canonicalPath, Astro.site ?? Astro.url.origin);
+// `<` is escaped so frontmatter text can never close the <script> early.
+const jsonLd =
+	schema &&
+	JSON.stringify(Array.isArray(schema) ? schema : [schema]).replace(/</g, '\\u003c');
 ---
 
 <!doctype html>
@@ -32,11 +47,14 @@ const canonical = new URL(Astro.url.pathname, Astro.site ?? Astro.url.origin);
 		{noindex && <meta name="robots" content="noindex" />}
 
 		<!-- Open Graph / Twitter -->
-		<meta property="og:type" content="website" />
+		<meta property="og:type" content={ogType} />
 		<meta property="og:title" content={title} />
 		<meta property="og:description" content={description} />
+		<meta property="og:url" content={canonical.href} />
 		<meta property="og:site_name" content={site.name} />
+		{ogImage && <meta property="og:image" content={ogImage} />}
 		<meta name="twitter:card" content="summary_large_image" />
+		{jsonLd && <script is:inline type="application/ld+json" set:html={jsonLd} />}
 
 		<!-- Inter, preconnected so the font request starts before CSS resolves -->
 		<link rel="preconnect" href="https://fonts.googleapis.com" />

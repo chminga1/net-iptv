@@ -5,8 +5,9 @@ import Button from './ui/Button.astro';
 
 // `astro build` emits /features/ while `astro dev` serves /features.
 const current = Astro.url.pathname.replace(/\/+$/, '') || '/';
+// Nested routes (/blog/<slug>) keep their section highlighted.
 const isActive = (href: string): boolean =>
-	href === '/' ? current === '/' : current === href;
+	href === '/' ? current === '/' : current === href || current.startsWith(`${href}/`);
 const moreIsActive = moreLinks.some((link) => isActive(link.href));
 
 const underline =
@@ -38,7 +39,7 @@ const underline =
 				<Play class="h-4 w-4 text-white" fill="currentColor" aria-hidden="true" />
 			</span>
 			<span class="text-base font-bold tracking-tight text-fg">
-				Nova<span class="text-link">IPTV</span>
+				Net <span class="text-link">IPTV</span>
 			</span>
 		</a>
 

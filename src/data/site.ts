@@ -35,7 +35,7 @@ export interface Faq {
 }
 
 export const site = {
-	name: 'NovaIPTV',
+	name: 'Net IPTV',
 	tagline: 'Discover Top IPTV Service',
 	description:
 		'Movies, TV shows and more. Gateway to a universe of channels streaming straight to your device.',
@@ -49,7 +49,7 @@ export const site = {
 	whatsapp: '212617984899',
 	/** Same number formatted for display next to the WhatsApp buttons. */
 	whatsappDisplay: '+212 617 984 899',
-	email: 'support@novaiptv.example',
+	email: 'support@netiptv.example',
 } as const;
 
 export const navLinks: readonly NavLink[] = [

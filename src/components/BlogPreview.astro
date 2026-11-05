@@ -1,14 +1,20 @@
 ---
 import { Image } from 'astro:assets';
 import { ArrowRight, Image as ImageIcon } from '@lucide/astro';
-import { HOME_POST_COUNT, posts } from '../data/blog';
+import { HOME_POST_COUNT, placeholderPosts } from '../data/blog';
+import { getPosts, toCard } from '../lib/blog';
 import Badge from './ui/Badge.astro';
 import Button from './ui/Button.astro';
 import Card from './ui/Card.astro';
 import SectionHeading from './ui/SectionHeading.astro';
 
-// Teaser: the newest few posts. /blog holds the full list.
-const featured = posts.slice(0, HOME_POST_COUNT);
+// Teaser: the newest few posts, or the placeholders until the first one
+// is published. /blog holds the full list.
+const published = await getPosts();
+const featured = (published.length ? published.map(toCard) : placeholderPosts).slice(
+	0,
+	HOME_POST_COUNT,
+);
 ---
 
 {/*
@@ -28,7 +34,7 @@ const featured = posts.slice(0, HOME_POST_COUNT);
 		<ul class="reveal-group mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
 			{
 				featured.map((post) => (
-					<Card as="li" class="group flex h-full flex-col overflow-hidden">
+					<Card as="li" class="group relative flex h-full flex-col overflow-hidden">
 						{/*
 							Same fixed-ratio slot as the /blog rows: real art when set,
 							placeholder until then, so adding a picture shifts nothing.
@@ -61,13 +67,24 @@ const featured = posts.slice(0, HOME_POST_COUNT);
 								<span class="text-xs text-fg-subtle">{post.readingTime}</span>
 							</div>
 							<h3 class="mt-4 text-lg font-bold text-balance text-fg">
-								{post.title}
+								{post.href ? (
+									<a href={post.href} class="after:absolute after:inset-0">
+										{post.title}
+									</a>
+								) : (
+									post.title
+								)}
 							</h3>
 							<p class="mt-2 grow text-sm leading-relaxed text-fg-muted text-pretty">
 								{post.excerpt}
 							</p>
-							<span class="mt-5 flex items-center gap-2 text-sm font-semibold text-fg-subtle">
-								Coming soon
+							<span
+								class:list={[
+									'mt-5 flex items-center gap-2 text-sm font-semibold',
+									post.href ? 'text-link' : 'text-fg-subtle',
+								]}
+							>
+								{post.href ? 'Read guide' : 'Coming soon'}
 								<ArrowRight
 									class="h-4 w-4 transition-transform group-hover:translate-x-1"
 									aria-hidden="true"

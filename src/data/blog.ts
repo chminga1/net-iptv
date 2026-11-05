@@ -1,62 +1,66 @@
 import type { ImageMetadata } from 'astro';
 
 /**
- * Shared post list: the /blog page renders all of these, the home page teaser
- * renders the first few. One source so the two cannot drift apart.
+ * Card shape shared by the /blog list, the topic pages and the home-page
+ * teaser. Real posts are mapped into it by `toCard()` in src/lib/blog.ts.
  */
 export interface BlogPost {
 	readonly category: string;
 	readonly title: string;
 	readonly excerpt: string;
 	readonly readingTime: string;
+	/** Link to the article. Placeholders have none and show "Coming soon". */
+	readonly href?: string;
 	/**
-	 * Article artwork. Drop a file in src/assets/blog/ and import it here;
-	 * until then each row shows an empty image slot of the same size, so the
-	 * layout does not shift when the real picture arrives.
+	 * Article artwork. Set `cover` in the post frontmatter; until then each
+	 * row shows an empty image slot of the same size, so the layout does not
+	 * shift when the real picture arrives.
 	 */
 	readonly image?: ImageMetadata;
 }
 
-// Placeholder editorial plan. When the real posts land, move this to a content
-// collection (src/content/blog/) and swap the map below for getCollection().
-export const posts: readonly BlogPost[] = [
+/**
+ * Shown only while no article is published, so /blog and the home page are
+ * never empty. They disappear automatically with the first real post.
+ */
+export const placeholderPosts: readonly BlogPost[] = [
 	{
-		category: 'Guides',
+		category: 'Devices & Setup',
 		title: 'How to install IPTV on a Fire Stick in 2026',
 		excerpt:
 			'A walkthrough of sideloading, player choice and the settings that stop buffering before it starts.',
 		readingTime: '6 min read',
 	},
 	{
-		category: 'Comparisons',
+		category: 'Best IPTV & Comparisons',
 		title: 'IPTV vs cable: what you actually save in a year',
 		excerpt:
 			'We price out a typical household across both, including the fees cable providers keep off the headline rate.',
 		readingTime: '8 min read',
 	},
 	{
-		category: 'Troubleshooting',
+		category: 'Fixes & Troubleshooting',
 		title: 'Fixing buffering on a slow connection',
 		excerpt:
 			'Bitrate, DNS, Wi-Fi band and player buffer size — the four settings worth changing, in order.',
 		readingTime: '5 min read',
 	},
 	{
-		category: 'Sports',
+		category: 'Sports on IPTV',
 		title: 'Every league you can follow this season',
 		excerpt:
 			'NFL, NBA, MLB, NHL and MLS coverage mapped against the channels carrying each fixture.',
 		readingTime: '7 min read',
 	},
 	{
-		category: 'News',
+		category: 'IPTV Basics',
 		title: 'What 4K streaming means for your home internet',
 		excerpt:
 			'Bandwidth requirements explained without the jargon, plus how adaptive bitrate protects the picture.',
 		readingTime: '4 min read',
 	},
 	{
-		category: 'Guides',
+		category: 'Devices & Setup',
 		title: 'Setting up a second device the right way',
 		excerpt:
 			'Simultaneous connections, household sharing and the mistakes that trigger an account lock.',

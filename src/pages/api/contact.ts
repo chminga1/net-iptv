@@ -104,7 +104,7 @@ export const POST: APIRoute = async ({ request }) => {
 
 	const apiKey = import.meta.env.RESEND_API_KEY;
 	const to = import.meta.env.TO_EMAIL;
-	const from = import.meta.env.FROM_EMAIL ?? 'NovaIPTV <onboarding@resend.dev>';
+	const from = import.meta.env.FROM_EMAIL ?? 'Net IPTV <onboarding@resend.dev>';
 
 	if (!apiKey || !to) {
 		// A config gap is ours, not the visitor's — log loudly, stay vague publicly.

@@ -3,6 +3,7 @@
    Only src/ holds markup that can contain utility classes. */
 @import 'tailwindcss' source(none);
 @source '../**/*.{astro,html,ts,tsx,js,jsx,md,mdx}';
+@plugin '@tailwindcss/typography';
 
 /* ---------------------------------------------------------------------------
    Layer 1 — primitive tokens (raw values, never used directly in components)
@@ -326,4 +327,57 @@
 	.neon-green {
 		animation: neon-green-pulse 2.8s ease-in-out infinite;
 	}
+}
+
+/* ---------------------------------------------------------------------------
+   Blog article body
+   ---------------------------------------------------------------------------
+   Maps @tailwindcss/typography onto the site tokens so Markdown articles read
+   as part of the same dark UI. Used as `prose prose-blog` on the post body.
+--------------------------------------------------------------------------- */
+.prose-blog {
+	--tw-prose-body: var(--fg-muted);
+	--tw-prose-headings: var(--fg);
+	--tw-prose-lead: var(--fg-muted);
+	--tw-prose-links: var(--link);
+	--tw-prose-bold: var(--fg);
+	--tw-prose-counters: var(--fg-subtle);
+	--tw-prose-bullets: var(--accent);
+	--tw-prose-hr: var(--border);
+	--tw-prose-quotes: var(--fg);
+	--tw-prose-quote-borders: var(--primary);
+	--tw-prose-captions: var(--fg-subtle);
+	--tw-prose-code: var(--fg);
+	--tw-prose-pre-code: var(--fg);
+	--tw-prose-pre-bg: var(--surface-raised);
+	--tw-prose-th-borders: var(--border-strong);
+	--tw-prose-td-borders: var(--border);
+	font-size: 1.0625rem;
+	line-height: 1.8;
+}
+
+.prose-blog :where(h2, h3) {
+	letter-spacing: -0.01em;
+	scroll-margin-top: 5rem;
+}
+
+.prose-blog :where(a):not(:where(.not-prose *)) {
+	text-underline-offset: 3px;
+	text-decoration-color: color-mix(in oklab, var(--link) 45%, transparent);
+}
+
+.prose-blog :where(a):not(:where(.not-prose *)):hover {
+	text-decoration-color: var(--link);
+}
+
+/* Comparison tables scroll sideways on phones instead of widening the page. */
+.prose-blog :where(table) {
+	display: block;
+	overflow-x: auto;
+	white-space: nowrap;
+}
+
+.prose-blog :where(img) {
+	border-radius: var(--radius-card);
+	border: 1px solid var(--border);
 }

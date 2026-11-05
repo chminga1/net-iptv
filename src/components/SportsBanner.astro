@@ -3,6 +3,7 @@ import { Image } from 'astro:assets';
 import { Trophy } from '@lucide/astro';
 import sportsBg from '../assets/sports-bg.jpg';
 import Button from './ui/Button.astro';
+import { whatsappLink } from '../data/site';
 
 const sports = [
 	{ label: 'Basketball', caption: 'NBA · EuroLeague', glow: 'bg-orange-500/30' },
@@ -74,7 +75,13 @@ const sports = [
 					Every major league, every match day, in up to 4K with commentary in
 					multiple languages. No blackouts, no missed kick-offs.
 				</p>
-				<Button href="/pricing" class="mt-8">Start watching</Button>
+				<Button
+					href={whatsappLink("Hi! I'd like to start watching live sports with Net IPTV.")}
+					external
+					class="mt-8"
+				>
+					Start watching
+				</Button>
 			</div>
 
 			<ul class="reveal-group grid grid-cols-3 gap-4">
