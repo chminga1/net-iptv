@@ -4,6 +4,7 @@ import type { ImageMetadata } from 'astro';
 import { ArrowRight, Play } from '@lucide/astro';
 import Button from './ui/Button.astro';
 import SectionHeading from './ui/SectionHeading.astro';
+import { whatsappLink } from '../data/site';
 
 import barbie from '../assets/posters/barbie.webp';
 import libraryGrid from '../assets/posters/library-grid.jpg';
@@ -52,6 +53,14 @@ const movies: readonly Movie[] = [
 			{
 				movies.map((movie) => (
 					<li class="group w-44 shrink-0 snap-start sm:w-52">
+						{/* Each poster opens WhatsApp with the title pre-filled. */}
+						<a
+							href={whatsappLink(`Hi! I'd like to watch "${movie.title}" with Net IPTV.`)}
+							target="_blank"
+							rel="noopener noreferrer"
+							aria-label={`Ask about watching ${movie.title} on WhatsApp`}
+							class="block"
+						>
 						<div class="relative aspect-2/3 overflow-hidden rounded-xl border border-border transition-all duration-300 group-hover:-translate-y-1 group-hover:border-primary/50">
 							{/*
 								Poster art is decorative here — the title and meta sit in
@@ -90,6 +99,7 @@ const movies: readonly Movie[] = [
 							{movie.title}
 						</h3>
 						<p class="text-xs text-fg-subtle">{movie.meta}</p>
+						</a>
 					</li>
 				))
 			}
