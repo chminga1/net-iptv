@@ -53,7 +53,7 @@ howto:
 
 **How to activate Net IPTV in short: you choose a plan, open the welcome email that arrives within about 60 seconds of payment, install a player app on your device, and sign in with the details from that email or send support your device's MAC address.** On most devices the whole process takes under five minutes, and you don't need any technical knowledge to get it right.
 
-This guide covers every device we support, in the order most people set them up: Smart TVs, Fire TV Stick, Android and iOS, MAG boxes, and Windows or macOS. It also covers the five most common causes of an "it isn't working" moment, so you can fix them yourself in a minute. If you prefer to see the short version per device first, our [supported devices page](/devices) has quick step lists for each platform. For a provider-neutral overview of login types and player apps, see our [complete IPTV setup guide](/blog/how-to-set-up-iptv), and if IPTV is new to you, start with [what IPTV is](/blog/iptv-guide).
+This guide covers every device we support, in the order most people set them up: Smart TVs, Fire TV Stick, Android and iOS, MAG boxes, and Windows or macOS. It also covers the five most common causes of an "it isn't working" moment, so you can fix them yourself in a minute. If you prefer to see the short version per device first, our [supported devices page](/devices) has quick step lists for each platform.
 
 ## Quick questions
 

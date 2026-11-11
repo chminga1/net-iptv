@@ -38,7 +38,7 @@ faq:
 
 **This Net IPTV review is written by the Net IPTV team, so instead of giving ourselves five stars, we'll show you exactly what you get, where the service falls short, and how to check every claim yourself before you pay a cent.** In short: Net IPTV is an IPTV subscription with 22,000+ live channels and 80,000+ films and series in 4K, FHD and HD, plans from €15 a month or €70 a year, a free trial, and a 7-day money-back guarantee written into the terms.
 
-Many "reviews" of IPTV services are written by affiliates paid per sign-up, or by the provider pretending to be an independent reviewer. We'd rather be upfront about who's writing. Everything below can be checked against our pricing page, [terms](/terms) and [FAQ](/faq). Where we make a claim you can't check from your sofa, we tell you how to test it during the trial. To compare us with other providers on the same terms, use our guide on [how to choose the best IPTV service](/blog/best-iptv-service); for the basics, see our guide to [what IPTV is](/blog/iptv-guide).
+Many "reviews" of IPTV services are written by affiliates paid per sign-up, or by the provider pretending to be an independent reviewer. We'd rather be upfront about who's writing. Everything below can be checked against our pricing page, [terms](/terms) and [FAQ](/faq). Where we make a claim you can't check from your sofa, we tell you how to test it during the trial. To compare us with other providers on the same terms, use our guide on [how to choose the best IPTV service](/blog/best-iptv-service).
 
 ## Quick questions
 

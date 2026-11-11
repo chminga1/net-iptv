@@ -6,6 +6,8 @@ excerpt: "Your home channels, in your language, wherever you live: the legal opt
 publishDate: 2026-11-10
 updateDate: 2026-11-10
 author: editorial
+cover: ../../assets/blog/watch-tv-abroad.webp
+coverAlt: "An expat's new apartment abroad with a smart TV glowing, representing watching TV from home abroad"
 
 cluster: watch-abroad
 role: hub
@@ -36,7 +38,7 @@ faq:
 
 **To watch TV from home abroad, you have six realistic options: EU portability for your paid subscriptions, international editions of streaming apps, your home broadcasters' own apps (often blocked outside the country), satellite, local pay TV with international channels, and an IPTV service with the channels you want.** Which one works for you depends on where you've moved from, where you live now, and whether you want on-demand series or live channels with a programme guide.
 
-This guide is for expats, students, retirees and frequent travellers: anyone who wants their home channels, in their own language, wherever they are. It explains what is legal, why apps that work at home suddenly stop working abroad, and how to set up a reliable TV corner in your new home. For the basics of the technology, start with our complete guide on [what IPTV is](/blog/iptv-guide).
+This guide is for expats, students, retirees and frequent travellers: anyone who wants their home channels, in their own language, wherever they are. It explains what is legal, why apps that work at home suddenly stop working abroad, and how to set up a reliable TV corner in your new home.
 
 ## Quick questions
 
@@ -56,6 +58,8 @@ This is called **geo-blocking**, and it's a contractual issue rather than a tech
 - **Sports rights** are the strictest of all, sold separately for each market and often for each season.
 
 Understanding this helps you choose: the reliable solutions are the ones licensed for where you actually are, not the ones that try to hide where you are.
+
+![A tablet showing a locked streaming app next to a passport, illustrating why TV apps stop working abroad](../../assets/blog/watch-tv-abroad-2.webp)
 
 ## 6 ways to watch TV from home abroad
 
@@ -137,7 +141,7 @@ Setting up TV abroad usually takes less than an hour: check your internet connec
 1. **Check your connection.** Aim for a stable 15 Mbps per Full HD stream, 25 Mbps for 4K. Rental flats often have a weak router far from the TV, so test speeds where the TV actually is.
 2. **Choose the device.** A local Smart TV works, but a streaming stick (Fire TV Stick, Chromecast with Google TV, Apple TV) gives you a familiar interface wherever you move.
 3. **Mind the account country.** App stores on TVs and sticks show apps based on your account's country, so some apps may not appear if you change it.
-4. **Install a player and sign in.** Our [IPTV setup guide](/blog/how-to-set-up-iptv) walks through every device and login type.
+4. **Install a player and sign in.**
 5. **Set your time zone.** Set it in both the device and the player, so the guide and catch-up line up with your day.
 6. **Wire it if you can.** An Ethernet cable to the TV, or a mesh Wi-Fi point nearby, prevents most buffering.
 
@@ -178,6 +182,8 @@ What to consider:
 - **Phones and tablets** are the simplest backup screen, especially for watching in a different room or while travelling.
 
 If you'll be moving between countries often, choose a player that's available on several platforms, so a new TV doesn't mean starting from scratch.
+
+![A travel bag packed with a streaming stick, remote and plug adapter, the devices to bring when moving abroad](../../assets/blog/watch-tv-abroad-3.webp)
 
 ## Watching live sport from home while abroad
 
@@ -235,4 +241,4 @@ News is often what expats miss most, and it's also the easiest part of home TV t
 
 ## Conclusion
 
-Watching TV from home abroad is easier than ever if you choose routes that are licensed for where you are: EU portability for paid subscriptions on temporary stays, international streaming apps for series, and a transparent, stable IPTV service for live channels in your language. Test on your actual connection, set the guide to your local time, and don't build your evenings around geo-blocked apps. For the full background on how IPTV works, read our complete [IPTV guide](/blog/iptv-guide), and when you're ready, ask Net IPTV for a free trial on your new connection.
+Watching TV from home abroad is easier than ever if you choose routes that are licensed for where you are: EU portability for paid subscriptions on temporary stays, international streaming apps for series, and a transparent, stable IPTV service for live channels in your language. Test on your actual connection, set the guide to your local time, and don't build your evenings around geo-blocked apps. When you're ready, ask Net IPTV for a free trial on your new connection.

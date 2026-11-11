@@ -38,7 +38,7 @@ faq:
 
 **IPTV Germany in one sentence: the technology is completely legal, but watching an unlicensed IPTV stream is not, and 2026 is the year enforcement caught up with it.** IPTV simply means television delivered over your internet connection, which is how millions of German households already watch MagentaTV, waipu.tv or Zattoo. The legal risk sits with *where* the stream comes from: a provider without the rights to Bundesliga, Sky or DAZN content is selling something it can't legally sell, and since 2017 EU law no longer treats watching such streams as harmless.
 
-This guide is for English speakers living in Germany (expats, students, international families) who want to understand the rules before choosing a TV setup. It covers the law, the 2026 crackdown, who actually holds the football rights, and a checklist for judging any provider, including us. It's part of our wider guide on [watching TV from home abroad](/blog/watch-tv-abroad), and if the technology itself is new to you, start with [what IPTV is and how it works](/blog/iptv-guide).
+This guide is for English speakers living in Germany (expats, students, international families) who want to understand the rules before choosing a TV setup. It covers the law, the 2026 crackdown, who actually holds the football rights, and a checklist for judging any provider, including us. It's part of our wider guide on [watching TV from home abroad](/blog/watch-tv-abroad).
 
 ## Quick questions
 
