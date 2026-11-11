@@ -19,7 +19,6 @@ interface CtaVariant {
 	readonly note: string;
 	readonly href: string;
 	readonly external: boolean;
-	readonly trial: boolean;
 }
 
 const VARIANTS: readonly CtaVariant[] = [
@@ -28,30 +27,26 @@ const VARIANTS: readonly CtaVariant[] = [
 		note: 'No card needed · Activated in minutes',
 		href: whatsappLink("Hi! I'd like a free IPTV trial."),
 		external: true,
-		trial: true,
 	},
 	{
 		label: 'Ask us anything on WhatsApp',
 		note: 'Real people, 24/7 · Replies in minutes',
 		href: whatsappLink('Hi! I have a question about your IPTV service.'),
 		external: true,
-		trial: false,
 	},
 	{
 		label: 'Compare plans and prices',
 		note: '1, 3, 6 or 12 months · 7-day money-back guarantee',
 		href: '/pricing',
 		external: false,
-		trial: false,
 	},
 ];
 
-/* Mirrors src/components/ui/Button.astro (trial / primary, size lg). */
+/* Mirrors src/components/ui/Button.astro (trial variant, size lg): every
+   in-article CTA uses the green trial style so they read as one action. */
 const BASE =
 	'inline-flex min-h-12 items-center justify-center gap-2 rounded-full px-8 py-4 text-base font-semibold no-underline transition-all duration-200 ease-out hover:-translate-y-0.5';
 const TRIAL = 'neon-green bg-trial-fill text-trial-on-fill hover:brightness-110';
-const PRIMARY =
-	'bg-primary text-on-primary glow-primary hover:bg-primary-hover hover:glow-primary-hover';
 
 const ctaNode = (variant: CtaVariant): Element => ({
 	type: 'element',
@@ -63,7 +58,7 @@ const ctaNode = (variant: CtaVariant): Element => ({
 			tagName: 'a',
 			properties: {
 				href: variant.href,
-				className: [BASE, variant.trial ? TRIAL : PRIMARY],
+				className: [BASE, TRIAL],
 				...(variant.external ? { target: '_blank', rel: ['noopener', 'noreferrer'] } : {}),
 			},
 			children: [{ type: 'text', value: variant.label }],

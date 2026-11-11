@@ -584,6 +584,17 @@ export const KEYWORD_MAP: readonly KeywordEntry[] = [
 		priority: 3,
 	},
 	{
+		// Honest country guide for English speakers in Germany: legality,
+		// enforcement and licensed options — never a pitch to bypass rights.
+		slug: 'iptv-germany',
+		keyword: 'iptv germany',
+		variants: ['iptv in germany', 'is iptv legal in germany', 'english tv in germany'],
+		cluster: 'watch-abroad',
+		role: 'spoke',
+		intent: 'informational',
+		priority: 1,
+	},
+	{
 		slug: 'arabic-iptv',
 		keyword: 'arabic iptv',
 		variants: ['arabic channels iptv', 'arabic tv abroad'],
@@ -609,6 +620,17 @@ export const KEYWORD_MAP: readonly KeywordEntry[] = [
 		variants: ['iptv setup', 'how to install iptv', 'iptv installation guide'],
 		cluster: 'devices',
 		role: 'hub',
+		intent: 'howto',
+		priority: 1,
+	},
+	{
+		// Brand-adjacent setup guide. "net iptv" and "iptv subscription" stay
+		// reserved for / and /pricing; this owns the post-purchase how-to intent.
+		slug: 'how-to-activate-net-iptv',
+		keyword: 'how to activate net iptv',
+		variants: ['net iptv setup', 'net iptv activation', 'activate net iptv subscription'],
+		cluster: 'devices',
+		role: 'spoke',
 		intent: 'howto',
 		priority: 1,
 	},
@@ -899,7 +921,7 @@ export const KEYWORD_MAP: readonly KeywordEntry[] = [
 export const RESERVED_KEYWORDS: readonly ReservedKeyword[] = [
 	{
 		owner: '/',
-		keywords: ['iptv service', 'iptv subscription', 'buy iptv', 'iptv provider', 'net iptv'],
+		keywords: ['iptv service', 'iptv subscription', 'buy iptv', 'iptv provider', 'net iptv', 'net iptv subscription'],
 	},
 	{
 		owner: '/pricing',

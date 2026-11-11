@@ -370,11 +370,15 @@
 	text-decoration-color: var(--link);
 }
 
-/* Comparison tables scroll sideways on phones instead of widening the page. */
+/* Comparison tables scroll sideways on phones instead of widening the page.
+   Cells wrap, so a table only scrolls when it truly can't fit. */
 .prose-blog :where(table) {
 	display: block;
 	overflow-x: auto;
-	white-space: nowrap;
+}
+
+.prose-blog :where(th, td) {
+	min-width: 6rem;
 }
 
 .prose-blog :where(img) {

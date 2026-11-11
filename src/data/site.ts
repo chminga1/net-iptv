@@ -86,6 +86,7 @@ export const plans: readonly Plan[] = [
 			'Multi-language audio & subtitles',
 			'Instant activation by email',
 			'Works on Smart TV, mobile, Fire Stick & more',
+			'7-day money-back guarantee',
 			'24/7 live chat support',
 		],
 	},
