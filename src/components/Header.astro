@@ -1,14 +1,28 @@
 ---
-import { ChevronDown, Menu, Play, X } from '@lucide/astro';
-import { moreLinks, navLinks, site, whatsappLink } from '../data/site';
+import { ChevronDown, Globe, Menu, Play, X } from '@lucide/astro';
+import { whatsappLink } from '../data/site';
+import {
+	LOCALES,
+	basePath,
+	getLocale,
+	localizePath,
+	switchPath,
+	useTranslations,
+} from '../i18n';
 import Button from './ui/Button.astro';
 
-// `astro build` emits /features/ while `astro dev` serves /features.
-const current = Astro.url.pathname.replace(/\/+$/, '') || '/';
+const locale = getLocale(Astro.currentLocale);
+const t = useTranslations(locale);
+const navLinks = t.nav;
+const moreLinks = t.moreLinks;
+
+// Active state compares unprefixed paths, so /de/features highlights "Features".
+const current = basePath(Astro.url.pathname) || '/';
 // Nested routes (/blog/<slug>) keep their section highlighted.
 const isActive = (href: string): boolean =>
 	href === '/' ? current === '/' : current === href || current.startsWith(`${href}/`);
 const moreIsActive = moreLinks.some((link) => isActive(link.href));
+const href = (path: string) => localizePath(path, locale);
 
 const underline =
 	'absolute -bottom-1.5 left-0 h-0.5 w-full rounded-full bg-gradient-to-r from-[var(--brand-500)] to-[var(--accent-500)]';
@@ -29,9 +43,9 @@ const underline =
 		class="mx-auto flex h-16 max-w-7xl items-center justify-between gap-4 px-5 sm:px-8"
 	>
 		<a
-			href="/"
+			href={href('/')}
 			class="flex shrink-0 items-center gap-2.5"
-			aria-label={`${site.name} home`}
+			aria-label={t.header.homeLabel}
 		>
 			<span
 				class="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-[var(--brand-500)] to-[var(--accent-500)] shadow-lg shadow-primary/30"
@@ -43,11 +57,11 @@ const underline =
 			</span>
 		</a>
 
-		<nav class="hidden items-center gap-6 lg:flex" aria-label="Main">
+		<nav class="hidden items-center gap-6 lg:flex" aria-label={t.header.mainNav}>
 			{
 				navLinks.map((link) => (
 					<a
-						href={link.href}
+						href={href(link.href)}
 						aria-current={isActive(link.href) ? 'page' : undefined}
 						class:list={[
 							'relative text-sm font-medium transition-colors',
@@ -76,7 +90,7 @@ const underline =
 						moreIsActive ? 'text-fg' : 'text-fg-muted hover:text-fg',
 					]}
 				>
-					More
+					{t.header.more}
 					<ChevronDown
 						class="h-3.5 w-3.5 transition-transform duration-200 group-hover:rotate-180 group-focus-within:rotate-180"
 						aria-hidden="true"
@@ -91,7 +105,7 @@ const underline =
 						{
 							moreLinks.map((link) => (
 								<a
-									href={link.href}
+									href={href(link.href)}
 									aria-current={isActive(link.href) ? 'page' : undefined}
 									class:list={[
 										'block rounded-lg px-3 py-2.5 text-sm font-medium transition-colors',
@@ -110,22 +124,54 @@ const underline =
 		</nav>
 
 		<div class="flex items-center gap-2">
+			{/*
+				Language switch: plain links, so it works without JS and crawlers
+				can follow it. Goes to the same page in the other language when
+				one exists, otherwise to that language's home page.
+			*/}
+			<div
+				role="group"
+				aria-label={t.header.language}
+				class="flex h-10 items-center gap-0.5 rounded-full border border-border bg-surface p-1 text-xs font-bold"
+			>
+				<Globe class="mx-1 hidden h-4 w-4 text-fg-subtle sm:block" aria-hidden="true" />
+				{
+					LOCALES.map((code) => (
+						<a
+							href={switchPath(Astro.url.pathname, code)}
+							hreflang={code}
+							lang={code}
+							title={t.header.languageNames[code]}
+							aria-label={t.header.languageNames[code]}
+							aria-current={code === locale ? 'true' : undefined}
+							class:list={[
+								'flex h-8 min-w-9 items-center justify-center rounded-full px-2 uppercase transition-colors',
+								code === locale
+									? 'bg-primary text-on-primary'
+									: 'text-fg-muted hover:bg-surface-raised hover:text-fg',
+							]}
+						>
+							{code}
+						</a>
+					))
+				}
+			</div>
 
 			<Button
-				href={whatsappLink('Hi! I would like to start the free trial.')}
+				href={whatsappLink(t.cta.trialMessage)}
 				external
 				size="sm"
 				variant="trial"
 				class="hidden sm:inline-flex"
 			>
-				Start free trial
+				{t.cta.startTrial}
 			</Button>
 
 			{/* Native <details> keeps the mobile menu keyboard-accessible with no JS. */}
 			<details class="group lg:hidden">
 				<summary
 					class="flex h-10 w-10 cursor-pointer list-none items-center justify-center rounded-lg border border-border bg-surface text-fg-muted transition-colors hover:text-fg [&::-webkit-details-marker]:hidden"
-					aria-label="Toggle navigation menu"
+					aria-label={t.header.toggleMenu}
 				>
 					<Menu class="h-5 w-5 group-open:hidden" aria-hidden="true" />
 					<X class="hidden h-5 w-5 group-open:block" aria-hidden="true" />
@@ -133,13 +179,13 @@ const underline =
 
 				<nav
 					class="absolute inset-x-0 top-full border-b border-border bg-bg/95 p-5 shadow-2xl backdrop-blur-xl"
-					aria-label="Mobile"
+					aria-label={t.header.mobileNav}
 				>
 					<div class="mx-auto flex max-w-7xl flex-col gap-1">
 						{
 							[...navLinks, ...moreLinks].map((link) => (
 								<a
-									href={link.href}
+									href={href(link.href)}
 									aria-current={isActive(link.href) ? 'page' : undefined}
 									class:list={[
 										'rounded-lg px-3 py-3 text-sm font-medium transition-colors',
@@ -153,13 +199,13 @@ const underline =
 							))
 						}
 						<Button
-							href={whatsappLink('Hi! I would like to start the free trial.')}
+							href={whatsappLink(t.cta.trialMessage)}
 							external
 							variant="trial"
 							class="mt-3 sm:hidden"
 							full
 						>
-							Start free trial
+							{t.cta.startTrial}
 						</Button>
 					</div>
 				</nav>

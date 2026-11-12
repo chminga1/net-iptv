@@ -1,0 +1,240 @@
+---
+import { getImage, Image } from 'astro:assets';
+import { render } from 'astro:content';
+import { ChevronRight, MessageCircle, Plus, Sparkles } from '@lucide/astro';
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import Badge from '../components/ui/Badge.astro';
+import Button from '../components/ui/Button.astro';
+import RelatedGuides from '../components/blog/RelatedGuides.astro';
+import {
+	blogPath,
+	getAuthor,
+	getCluster,
+	postUrl,
+	readingTime,
+	relatedGuides,
+	topicUrl,
+	type Post,
+} from '../lib/blog';
+import {
+	blogPostingSchema,
+	breadcrumbSchema,
+	faqSchema,
+	howToSchema,
+	type Crumb,
+} from '../lib/blog-schema';
+import { site, whatsappLink } from '../data/site';
+import { getLocale, localizePath, useTranslations } from '../i18n';
+
+interface Props {
+	post: Post;
+	posts: Post[];
+}
+
+const { post, posts } = Astro.props;
+const locale = getLocale(Astro.currentLocale);
+const t = useTranslations(locale);
+const b = t.blog;
+const { data } = post;
+const { Content, headings } = await render(post);
+
+const cluster = getCluster(data.cluster, locale);
+const author = getAuthor(data.author, locale);
+const related = relatedGuides(post, posts);
+const path = postUrl(post.id, locale);
+const origin = Astro.site ?? Astro.url;
+
+const updated = data.updateDate ?? data.publishDate;
+const formatDate = (date: Date) =>
+	date.toLocaleDateString(b.dateLocale, { day: 'numeric', month: 'long', year: 'numeric' });
+
+const toc = headings.filter((h) => h.depth === 2);
+
+const ogImage = data.cover
+	? new URL((await getImage({ src: data.cover, width: 1200, format: 'jpg' })).src, origin).href
+	: undefined;
+
+const crumbs: Crumb[] = [
+	{ name: b.home, path: localizePath('/', locale) },
+	{ name: b.blog, path: blogPath(locale) },
+	{ name: cluster.name, path: topicUrl(cluster.id, locale) },
+	{ name: data.title, path },
+];
+
+const schema = [
+	breadcrumbSchema(crumbs, origin),
+	blogPostingSchema(post, path, author, origin, ogImage, b.inLanguage),
+	faqSchema(data.faq),
+	...(data.howto ? [howToSchema(data.howto)] : []),
+];
+---
+
+<Layout
+	title={`${data.seoTitle ?? data.title} | ${site.name}`}
+	description={data.description}
+	schema={schema}
+	ogType="article"
+	ogImage={ogImage}
+>
+	<Header />
+	<main id="main">
+		<article>
+			<header class="relative overflow-clip bg-bg pt-12 pb-10 lg:pt-16">
+				<div
+					class="pointer-events-none absolute -top-32 left-1/2 h-80 w-[40rem] -translate-x-1/2 rounded-full bg-primary/15 blur-[120px]"
+					aria-hidden="true"
+				>
+				</div>
+				<div class="pointer-events-none absolute inset-0 bg-grid" aria-hidden="true"></div>
+
+				<div class="relative mx-auto max-w-3xl px-5 sm:px-8">
+					<nav aria-label={b.breadcrumb}>
+						<ol class="flex flex-wrap items-center gap-1 text-xs text-fg-subtle">
+							{crumbs.slice(0, -1).map((crumb) => (
+								<li class="flex items-center gap-1">
+									<a href={crumb.path} class="hover:text-fg">{crumb.name}</a>
+									<ChevronRight class="h-3 w-3" aria-hidden="true" />
+								</li>
+							))}
+							<li aria-current="page" class="truncate text-fg-muted">{data.title}</li>
+						</ol>
+					</nav>
+
+					<div class="mt-6">
+						<a href={topicUrl(cluster.id, locale)}><Badge>{cluster.name}</Badge></a>
+					</div>
+					<h1 class="mt-4 text-3xl font-black tracking-tight text-balance text-fg sm:text-5xl">
+						{data.title}
+					</h1>
+					<p class="mt-5 text-lg leading-relaxed text-fg-muted text-pretty">
+						{data.description}
+					</p>
+					<p class="mt-6 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-fg-subtle">
+						<span>{b.by} <span class="font-semibold text-fg">{author.name}</span></span>
+						<span aria-hidden="true">·</span>
+						<span>
+							{b.updated} <time datetime={updated.toISOString()}>{formatDate(updated)}</time>
+						</span>
+						<span aria-hidden="true">·</span>
+						<span>{readingTime(post.body, locale)}</span>
+					</p>
+				</div>
+			</header>
+
+			<div class="mx-auto max-w-3xl px-5 pb-20 sm:px-8 lg:pb-28">
+				{
+					data.cover && (
+						<Image
+							src={data.cover}
+							alt={data.coverAlt ?? data.title}
+							widths={[720, 1440]}
+							sizes="(min-width: 768px) 720px, 92vw"
+							loading="eager"
+							class="mb-10 aspect-video w-full rounded-card border border-border object-cover"
+						/>
+					)
+				}
+
+				<aside
+					aria-labelledby="takeaways-heading"
+					class="rounded-card border border-primary/30 bg-primary/5 p-6"
+				>
+					<h2 id="takeaways-heading" class="flex items-center gap-2 text-sm font-bold tracking-wide text-fg uppercase">
+						<Sparkles class="h-4 w-4 text-accent" aria-hidden="true" />
+						{b.keyTakeaways}
+					</h2>
+					<ul class="mt-4 space-y-2 text-fg-muted">
+						{data.keyTakeaways.map((point) => (
+							<li class="flex gap-3 leading-relaxed">
+								<span class="mt-2.5 h-1.5 w-1.5 shrink-0 rounded-full bg-accent" aria-hidden="true"></span>
+								<span>{point}</span>
+							</li>
+						))}
+					</ul>
+				</aside>
+
+				{
+					toc.length >= 3 && (
+						<details class="group mt-6 rounded-card border border-border bg-surface open:border-primary/50">
+							<summary class="flex cursor-pointer list-none items-center justify-between gap-4 p-5 text-sm font-semibold text-fg [&::-webkit-details-marker]:hidden">
+								{b.onThisPage}
+								<Plus
+									class="h-4 w-4 shrink-0 text-link transition-transform duration-300 group-open:rotate-45"
+									aria-hidden="true"
+								/>
+							</summary>
+							<ol class="space-y-2 px-5 pb-5 text-sm">
+								{toc.map((h) => (
+									<li>
+										<a href={`#${h.slug}`} class="text-fg-muted hover:text-fg">{h.text}</a>
+									</li>
+								))}
+							</ol>
+						</details>
+					)
+				}
+
+				<div class="prose prose-blog mt-10 max-w-none">
+					<Content />
+				</div>
+
+				<section aria-labelledby="faq-heading" class="mt-16">
+					<h2 id="faq-heading" class="text-2xl font-bold tracking-tight text-fg">
+						{b.faqHeading}
+					</h2>
+					<div class="mt-6 space-y-3">
+						{data.faq.map((item) => (
+							<details class="group rounded-xl border border-border bg-surface transition-colors duration-300 hover:border-primary/50 open:border-primary/50">
+								<summary class="flex cursor-pointer list-none items-center justify-between gap-4 p-5 text-left text-sm font-semibold text-fg [&::-webkit-details-marker]:hidden">
+									{item.q}
+									<Plus
+										class="h-4 w-4 shrink-0 text-link transition-transform duration-300 group-open:rotate-45"
+										aria-hidden="true"
+									/>
+								</summary>
+								<p class="px-5 pb-5 text-sm leading-relaxed text-fg-muted">{item.a}</p>
+							</details>
+						))}
+					</div>
+				</section>
+
+				<section class="mt-16 rounded-card border border-border bg-surface p-8 text-center">
+					<h2 class="text-2xl font-bold tracking-tight text-fg">{b.ctaHeading}</h2>
+					<p class="mx-auto mt-3 max-w-md text-fg-muted text-pretty">
+						{b.ctaBody(t.site.channels, t.site.titles)}
+					</p>
+					<div class="mt-6 flex flex-col items-center justify-center gap-3 sm:flex-row">
+						<Button
+							href={whatsappLink(b.ctaMessage(data.title))}
+							variant="trial"
+							external
+						>
+							<MessageCircle class="h-4 w-4" aria-hidden="true" />
+							{b.ctaTrial}
+						</Button>
+						<Button href={localizePath('/pricing', locale)} variant="secondary">{b.ctaPlans}</Button>
+					</div>
+				</section>
+
+				<section aria-label={b.aboutAuthor} class="mt-10 flex gap-4 border-t border-border pt-8">
+					<span
+						class="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-[var(--brand-500)] to-[var(--accent-500)] font-bold text-white"
+						aria-hidden="true"
+					>
+						{author.name.charAt(0)}
+					</span>
+					<div>
+						<p class="font-semibold text-fg">{author.name}</p>
+						<p class="text-sm text-fg-subtle">{author.role}</p>
+						<p class="mt-2 text-sm leading-relaxed text-fg-muted">{author.bio}</p>
+					</div>
+				</section>
+
+				<RelatedGuides post={post} related={related} />
+			</div>
+		</article>
+	</main>
+	<Footer />
+</Layout>

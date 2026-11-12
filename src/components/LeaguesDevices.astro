@@ -3,6 +3,7 @@ import { Image } from 'astro:assets';
 import { ArrowRight, CirclePlay, Tv } from '@lucide/astro';
 import devicesPhoto from '../assets/devices.jpg';
 import { whatsappLink } from '../data/site';
+import { getLocale, localizePath, useTranslations } from '../i18n';
 import Button from './ui/Button.astro';
 import SectionHeading from './ui/SectionHeading.astro';
 
@@ -18,13 +19,17 @@ const devices = [
 	'Apple TV',
 	'Xbox & PlayStation',
 ];
+
+const locale = getLocale(Astro.currentLocale);
+const t = useTranslations(locale);
+const href = (path: string) => localizePath(path, locale);
 ---
 
 <section class="relative bg-bg py-20 lg:py-28">
 	<div class="mx-auto max-w-7xl px-5 sm:px-8">
 		<div class="text-center">
 			<span class="text-xs font-semibold tracking-[0.25em] text-accent uppercase">
-				Every league
+				{t.devices.everyLeague}
 			</span>
 			<ul
 				class="mt-6 flex flex-wrap items-center justify-center gap-3 sm:gap-4"
@@ -54,7 +59,7 @@ const devices = [
 				</div>
 				<Image
 					src={devicesPhoto}
-					alt="A desk with a laptop, tablet, two phones, a smartwatch and wireless earbuds, all able to run the service."
+					alt={t.devices.photoAlt}
 					widths={[448, 896]}
 					sizes="(min-width: 1024px) 448px, 90vw"
 					loading="lazy"
@@ -65,10 +70,10 @@ const devices = [
 
 			<div>
 				<SectionHeading
-					eyebrow="Compatibility"
-					title="Works on the devices "
-					accent="you already own"
-					description="One subscription covers every screen in the house. No proprietary box, no installation visit."
+					eyebrow={t.devices.eyebrow}
+					title={t.devices.title}
+					accent={t.devices.accent}
+					description={t.devices.description}
 					align="left"
 				/>
 				<ul class="reveal-group mt-8 grid grid-cols-2 gap-3">
@@ -87,14 +92,14 @@ const devices = [
 		{/* Closes the whole photo + device grid block, centred beneath both columns. */}
 		<div class="mt-12 text-center">
 			<Button
-				href={whatsappLink("Hi! I'd like to test Net IPTV on my device.")}
+				href={whatsappLink(t.devices.testMessage)}
 				external
 				variant="trial"
 				size="lg"
 				class="group"
 			>
 				<CirclePlay class="h-5 w-5" aria-hidden="true" />
-				Test now
+				{t.cta.testNow}
 				<ArrowRight
 					class="h-4 w-4 transition-transform group-hover:translate-x-1"
 					aria-hidden="true"

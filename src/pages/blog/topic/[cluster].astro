@@ -1,30 +1,13 @@
 ---
-import Layout from '../../../layouts/Layout.astro';
-import Header from '../../../components/Header.astro';
-import PageHeader from '../../../components/PageHeader.astro';
-import Footer from '../../../components/Footer.astro';
-import PostRow from '../../../components/blog/PostRow.astro';
-import { CONTENT_RULES, type Cluster } from '../../../data/blog-strategy';
-import { site } from '../../../data/site';
-import {
-	BLOG_PATH,
-	activeClusters,
-	getPosts,
-	postsInCluster,
-	toCard,
-	topicUrl,
-	type Post,
-} from '../../../lib/blog';
-import { breadcrumbSchema } from '../../../lib/blog-schema';
+import View from '../../../views/BlogTopic.astro';
+import { activeClusters, getPosts, postsInCluster } from '../../../lib/blog';
+import type { Cluster } from '../../../data/blog-strategy';
+import type { Post } from '../../../lib/blog';
 
-/**
- * Archive for one cluster. Only clusters with at least one post get a page,
- * and the page stays noindex (and out of the sitemap) until the cluster has
- * enough articles not to be thin. The hub article leads the list.
- */
+/** One page per cluster that has at least one post in this language. */
 export async function getStaticPaths() {
-	const posts = await getPosts();
-	return activeClusters(posts).map((cluster) => ({
+	const posts = await getPosts('en');
+	return activeClusters(posts, 'en').map((cluster) => ({
 		params: { cluster: cluster.id },
 		props: { cluster, posts: postsInCluster(posts, cluster.id) },
 	}));
@@ -34,53 +17,6 @@ interface Props {
 	cluster: Cluster;
 	posts: Post[];
 }
-
-const { cluster, posts } = Astro.props;
-const ordered = [
-	...posts.filter((p) => p.id === cluster.hub),
-	...posts.filter((p) => p.id !== cluster.hub),
-];
-const origin = Astro.site ?? Astro.url;
-
-const schema = [
-	breadcrumbSchema(
-		[
-			{ name: 'Home', path: '/' },
-			{ name: 'Blog', path: BLOG_PATH },
-			{ name: cluster.name, path: topicUrl(cluster.id) },
-		],
-		origin,
-	),
-	{
-		'@context': 'https://schema.org',
-		'@type': 'CollectionPage',
-		name: `${cluster.name} — ${site.name} Blog`,
-		description: cluster.description,
-		url: new URL(topicUrl(cluster.id), origin).href,
-	},
-];
 ---
 
-<Layout
-	title={`${cluster.name} | ${site.name} Blog`}
-	description={cluster.description}
-	noindex={posts.length < CONTENT_RULES.topicIndexThreshold}
-	schema={schema}
->
-	<Header />
-	<main id="main">
-		<PageHeader eyebrow="Blog topic" title={cluster.name} description={cluster.description} />
-
-		<section class="relative bg-bg py-20 lg:py-28">
-			<div class="mx-auto max-w-7xl px-5 sm:px-8">
-				<ul class="reveal-group mx-auto max-w-4xl space-y-5">
-					{ordered.map((post) => <PostRow post={toCard(post)} />)}
-				</ul>
-				<p class="mt-12 text-center text-sm">
-					<a href={BLOG_PATH} class="font-semibold text-link hover:underline">Browse all articles</a>
-				</p>
-			</div>
-		</section>
-	</main>
-	<Footer />
-</Layout>
+<View {...Astro.props} />

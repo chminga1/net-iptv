@@ -13,21 +13,32 @@ import {
 } from '../data/blog-strategy';
 import type { BlogPost } from '../data/blog';
 import { moreLinks, navLinks } from '../data/site';
+import { TRANSLATED_PATHS, getLocale, useTranslations, type Locale } from '../i18n';
 
-export type Post = CollectionEntry<'blog'>;
+/** English posts live in the `blog` collection, German ones in `blogDe` (same slugs). */
+export type Post = CollectionEntry<'blog'> | CollectionEntry<'blogDe'>;
 
 export const BLOG_PATH = '/blog';
-export const postUrl = (slug: string): string => `${BLOG_PATH}/${slug}`;
-export const topicUrl = (cluster: string): string => `${BLOG_PATH}/topic/${cluster}`;
+/** /blog for English, /de/blog for German. */
+export const blogPath = (locale: string | undefined = 'en'): string =>
+	getLocale(locale) === 'de' ? `/de${BLOG_PATH}` : BLOG_PATH;
+export const postUrl = (slug: string, locale?: string): string => `${blogPath(locale)}/${slug}`;
+export const topicUrl = (cluster: string, locale?: string): string =>
+	`${blogPath(locale)}/topic/${cluster}`;
 
-export const getCluster = (id: string): Cluster => {
+/** Cluster with its name and description in the given language. */
+export const getCluster = (id: string, locale?: string): Cluster => {
 	const cluster = CLUSTERS.find((c) => c.id === id);
 	if (!cluster) throw new Error(`[blog] Unknown cluster "${id}"`);
-	return cluster;
+	const override = useTranslations(locale).blog.clusters[id];
+	return override ? { ...cluster, ...override } : cluster;
 };
 
-export const getAuthor = (id: string): Author =>
-	AUTHORS.find((a) => a.id === id) ?? AUTHORS[0];
+export const getAuthor = (id: string, locale?: string): Author => {
+	const author = AUTHORS.find((a) => a.id === id) ?? AUTHORS[0];
+	const override = useTranslations(locale).blog.author;
+	return override ? { ...author, ...override } : author;
+};
 
 /** Lower-case, collapse whitespace, drop years so "best iptv 2026" ≡ "best iptv". */
 export const normalizeKeyword = (keyword: string): string =>
@@ -45,44 +56,51 @@ export const wordCount = (body = ''): number =>
 		.split(/\s+/)
 		.filter(Boolean).length;
 
-/** ~230 wpm, rounded up, as "7 min read". */
-export const readingTime = (body = ''): string =>
-	`${Math.max(1, Math.ceil(wordCount(body) / 230))} min read`;
+/** ~230 wpm, rounded up, as "7 min read" / "7 Min. Lesezeit". */
+export const readingTime = (body = '', locale?: string): string =>
+	useTranslations(locale).blog.readingTime(Math.max(1, Math.ceil(wordCount(body) / 230)));
 
 // ---------------------------------------------------------------------------
 // Loading
 // ---------------------------------------------------------------------------
 
-let cache: Post[] | undefined;
+const cache: Partial<Record<Locale, Post[]>> = {};
 
 /**
- * Published posts, newest first. Drafts are included in `astro dev` so they
- * can be previewed, and dropped from production builds.
+ * Published posts in one language, newest first. Drafts are included in
+ * `astro dev` so they can be previewed, and dropped from production builds.
  */
-export async function getPosts(): Promise<Post[]> {
-	if (cache) return cache;
-	const all = await getCollection('blog', (entry) => import.meta.env.DEV || !entry.data.draft);
+export async function getPosts(locale?: string): Promise<Post[]> {
+	const lang = getLocale(locale);
+	const hit = cache[lang];
+	if (hit) return hit;
+	const keep = (entry: Post) => import.meta.env.DEV || !entry.data.draft;
+	const all: Post[] =
+		lang === 'de' ? await getCollection('blogDe', keep) : await getCollection('blog', keep);
 	all.sort((a, b) => b.data.publishDate.getTime() - a.data.publishDate.getTime());
-	validateBlog(all);
-	cache = all;
+	if (lang === 'de') validateBlogDe(all, await getPosts('en'));
+	else validateBlog(all);
+	cache[lang] = all;
 	return all;
 }
 
 export const postsInCluster = (posts: Post[], cluster: ClusterId | string): Post[] =>
 	posts.filter((p) => p.data.cluster === cluster);
 
-export const toCard = (post: Post): BlogPost => ({
-	category: getCluster(post.data.cluster).name,
+export const toCard = (post: Post, locale?: string): BlogPost => ({
+	category: getCluster(post.data.cluster, locale).name,
 	title: post.data.title,
 	excerpt: post.data.excerpt ?? post.data.description,
-	readingTime: readingTime(post.body),
-	href: postUrl(post.id),
+	readingTime: readingTime(post.body, locale),
+	href: postUrl(post.id, locale),
 	image: post.data.cover,
 });
 
 /** Clusters that have at least one post, in registry order. */
-export const activeClusters = (posts: Post[]): Cluster[] =>
-	CLUSTERS.filter((c) => posts.some((p) => p.data.cluster === c.id));
+export const activeClusters = (posts: Post[], locale?: string): Cluster[] =>
+	CLUSTERS.filter((c) => posts.some((p) => p.data.cluster === c.id)).map((c) =>
+		getCluster(c.id, locale),
+	);
 
 // ---------------------------------------------------------------------------
 // Related guides (rendered automatically under every post)
@@ -287,5 +305,64 @@ export function validateBlog(posts: Post[]): void {
 	for (const w of warnings) console.warn(`[blog] warning: ${w}`);
 	if (errors.length) {
 		throw new Error(`[blog] ${errors.length} strategy error(s):\n- ${errors.join('\n- ')}`);
+	}
+}
+
+// ---------------------------------------------------------------------------
+// German translations
+// ---------------------------------------------------------------------------
+
+let validatedDe = false;
+
+/**
+ * German posts are translations, so the keyword strategy is enforced on the
+ * English originals. Here: every German slug must match an English post with
+ * the same cluster and role, and internal links must stay inside the German
+ * site (/de/…) and point at pages that exist.
+ */
+export function validateBlogDe(posts: Post[], english: Post[]): void {
+	if (validatedDe) return;
+	validatedDe = true;
+
+	const errors: string[] = [];
+	const warnings: string[] = [];
+	const published = new Set(posts.map((p) => p.id));
+	const staticRoutes = new Set(TRANSLATED_PATHS.map((p) => (p === '/' ? '/de' : `/de${p}`)));
+	const DE_BLOG = blogPath('de');
+
+	for (const post of posts) {
+		const at = `src/content/blog-de/${post.id}.md`;
+		const original = english.find((p) => p.id === post.id);
+		if (!original) {
+			errors.push(`${at}: no English post with slug "${post.id}". German posts must translate an existing article.`);
+			continue;
+		}
+		if (post.data.cluster !== original.data.cluster) errors.push(`${at}: cluster "${post.data.cluster}" ≠ English "${original.data.cluster}".`);
+		if (post.data.role !== original.data.role) errors.push(`${at}: role "${post.data.role}" ≠ English "${original.data.role}".`);
+		if (/^#\s/m.test(post.body ?? '')) errors.push(`${at}: body contains an H1 (#). The title is the only H1.`);
+
+		for (const link of internalLinks(post.body)) {
+			if (link.startsWith(`${DE_BLOG}/topic/`)) {
+				const id = link.split('/')[4];
+				if (!posts.some((p) => p.data.cluster === id)) errors.push(`${at}: links to empty or unknown topic ${link}.`);
+			} else if (link.startsWith(`${DE_BLOG}/`)) {
+				if (!published.has(link.slice(DE_BLOG.length + 1))) errors.push(`${at}: links to ${link}, which has no German version.`);
+			} else if (link === DE_BLOG || staticRoutes.has(link)) {
+				// fine
+			} else if (link.startsWith('/de')) {
+				errors.push(`${at}: links to ${link}, which is not a page on the German site.`);
+			} else if (!link.startsWith('/_')) {
+				warnings.push(`${at}: links to the English page ${link}; use the /de version.`);
+			}
+		}
+	}
+
+	for (const original of english) {
+		if (!published.has(original.id)) warnings.push(`src/content/blog/${original.id}.md has no German translation yet (src/content/blog-de/${original.id}.md).`);
+	}
+
+	for (const w of warnings) console.warn(`[blog] warning: ${w}`);
+	if (errors.length) {
+		throw new Error(`[blog] ${errors.length} German blog error(s):\n- ${errors.join('\n- ')}`);
 	}
 }

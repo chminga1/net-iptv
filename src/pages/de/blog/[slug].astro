@@ -1,0 +1,16 @@
+---
+import View from '../../../views/BlogPost.astro';
+import { getPosts, type Post } from '../../../lib/blog';
+
+export async function getStaticPaths() {
+	const posts = await getPosts('de');
+	return posts.map((post) => ({ params: { slug: post.id }, props: { post, posts } }));
+}
+
+interface Props {
+	post: Post;
+	posts: Post[];
+}
+---
+
+<View {...Astro.props} />

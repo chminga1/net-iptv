@@ -2,45 +2,25 @@
 import { Star } from '@lucide/astro';
 import Card from './ui/Card.astro';
 import SectionHeading from './ui/SectionHeading.astro';
+import { getLocale, useTranslations } from '../i18n';
 
-const reviews = [
-	{
-		name: 'Marcus T.',
-		location: 'Manchester, UK',
-		initials: 'MT',
-		quote:
-			'Switched from cable six months ago and never looked back. Premier League in 4K with no lag, and the picture holds up even on match night.',
-	},
-	{
-		name: 'Sofia L.',
-		location: 'Stockholm, SE',
-		initials: 'SL',
-		quote:
-			'Setup took me four minutes on my Fire Stick. Support walked me through it on chat at 11pm — genuinely impressive service.',
-	},
-	{
-		name: 'David R.',
-		location: 'Toronto, CA',
-		initials: 'DR',
-		quote:
-			'The VOD library is enormous and new releases show up fast. Four devices on the yearly plan covers the whole family.',
-	},
-];
+const t = useTranslations(getLocale(Astro.currentLocale));
+const reviews = t.testimonials.reviews;
 ---
 
 <section class="relative bg-bg-subtle py-20 lg:py-28">
 	<div class="mx-auto max-w-7xl px-5 sm:px-8">
 		<SectionHeading
-			eyebrow="Customers"
-			title="Trusted by "
-			accent="thousands of homes"
+			eyebrow={t.testimonials.eyebrow}
+			title={t.testimonials.title}
+			accent={t.testimonials.accent}
 		/>
 
 		<ul class="reveal-group mt-14 grid gap-6 lg:grid-cols-3">
 			{
 				reviews.map((review) => (
 					<Card as="li" class="flex h-full flex-col p-7">
-						<div class="flex gap-0.5" aria-label="Rated 5 out of 5">
+						<div class="flex gap-0.5" aria-label={t.testimonials.rating}>
 							{Array.from({ length: 5 }).map(() => (
 								<Star
 									class="h-4 w-4 text-amber-400"

@@ -3,6 +3,9 @@ import { Check, Sparkles } from '@lucide/astro';
 import type { Plan } from '../../data/site';
 import { site, whatsappLink } from '../../data/site';
 import Button from './Button.astro';
+import { getLocale, useTranslations } from '../../i18n';
+
+const t = useTranslations(getLocale(Astro.currentLocale));
 
 interface Props {
 	plan: Plan;
@@ -87,15 +90,13 @@ const isNeon = plan.neon === true;
 	</ul>
 
 	<Button
-		href={whatsappLink(
-			`Hi! I'd like the ${plan.name} plan (${site.currency}${plan.price}).`,
-		)}
+		href={whatsappLink(t.pricing.planMessage(plan.name, plan.price))}
 		external
 		variant={plan.highlight ? 'primary' : 'secondary'}
 		class="mt-8"
 		full
-		aria-label={`Choose the ${plan.name} plan`}
+		aria-label={t.pricing.planAria(plan.name)}
 	>
-		Get started
+		{t.pricing.getStarted}
 	</Button>
 </article>

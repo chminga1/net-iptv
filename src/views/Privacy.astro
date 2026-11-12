@@ -1,0 +1,20 @@
+---
+import LegalLayout from '../layouts/LegalLayout.astro';
+import { useTranslations } from '../i18n';
+
+// PLACEHOLDER COPY — plausible wording, not legal advice.
+// Have a qualified lawyer review and adapt this before the site goes live.
+const page = useTranslations(Astro.currentLocale).pages.privacy;
+---
+
+<LegalLayout
+	title={page.title}
+	description={page.description}
+	pageTitle={page.pageTitle}
+	accent={page.accent}
+	lastUpdated={page.lastUpdated}
+	notice={page.notice}
+	sections={page.sections}
+	ctaHeading={page.ctaHeading}
+	ctaBody={page.ctaBody}
+/>

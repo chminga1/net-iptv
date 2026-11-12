@@ -1,6 +1,7 @@
 ---
 import '../styles/global.css';
 import { site } from '../data/site';
+import { basePath, getLocale, isTranslated, localizePath, useTranslations } from '../i18n';
 
 interface Props {
 	title?: string;
@@ -14,9 +15,12 @@ interface Props {
 	ogImage?: string;
 }
 
+const locale = getLocale(Astro.currentLocale);
+const t = useTranslations(locale);
+
 const {
-	title = `${site.tagline} | ${site.channels} Live Channels in 4K`,
-	description = site.description,
+	title = t.meta.defaultTitle,
+	description = t.meta.defaultDescription,
 	noindex = false,
 	schema,
 	ogType = 'website',
@@ -27,6 +31,17 @@ const {
 // the static build adds (/faq/ → /faq).
 const canonicalPath = Astro.url.pathname.replace(/(.)\/+$/, '$1');
 const canonical = new URL(canonicalPath, Astro.site ?? Astro.url.origin);
+
+// hreflang pairs, only for pages that exist in both languages.
+const origin = Astro.site ?? Astro.url.origin;
+const base = basePath(Astro.url.pathname);
+const alternates = isTranslated(Astro.url.pathname)
+	? [
+			{ lang: 'en', href: new URL(base, origin).href },
+			{ lang: 'de', href: new URL(localizePath(base, 'de'), origin).href },
+			{ lang: 'x-default', href: new URL(base, origin).href },
+		]
+	: [];
 // `<` is escaped so frontmatter text can never close the <script> early.
 const jsonLd =
 	schema &&
@@ -34,13 +49,14 @@ const jsonLd =
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang={locale}>
 	<head>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 		<link rel="icon" href="/favicon.ico" />
 		<link rel="canonical" href={canonical.href} />
+		{alternates.map((alt) => <link rel="alternate" hreflang={alt.lang} href={alt.href} />)}
 		<meta name="generator" content={Astro.generator} />
 		<title>{title}</title>
 		<meta name="description" content={description} />
@@ -52,6 +68,7 @@ const jsonLd =
 		<meta property="og:description" content={description} />
 		<meta property="og:url" content={canonical.href} />
 		<meta property="og:site_name" content={site.name} />
+		<meta property="og:locale" content={t.meta.ogLocale} />
 		{ogImage && <meta property="og:image" content={ogImage} />}
 		<meta name="twitter:card" content="summary_large_image" />
 		{jsonLd && <script is:inline type="application/ld+json" set:html={jsonLd} />}
@@ -70,7 +87,7 @@ const jsonLd =
 			href="#main"
 			class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[100] focus:rounded-full focus:bg-primary focus:px-5 focus:py-3 focus:text-sm focus:font-semibold focus:text-on-primary"
 		>
-			Skip to content
+			{t.meta.skipToContent}
 		</a>
 		<slot />
 	</body>

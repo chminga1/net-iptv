@@ -1,0 +1,22 @@
+---
+import View from '../../../../views/BlogTopic.astro';
+import { activeClusters, getPosts, postsInCluster } from '../../../../lib/blog';
+import type { Cluster } from '../../../../data/blog-strategy';
+import type { Post } from '../../../../lib/blog';
+
+/** One page per cluster that has at least one post in this language. */
+export async function getStaticPaths() {
+	const posts = await getPosts('de');
+	return activeClusters(posts, 'de').map((cluster) => ({
+		params: { cluster: cluster.id },
+		props: { cluster, posts: postsInCluster(posts, cluster.id) },
+	}));
+}
+
+interface Props {
+	cluster: Cluster;
+	posts: Post[];
+}
+---
+
+<View {...Astro.props} />

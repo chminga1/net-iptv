@@ -2,16 +2,20 @@
 import { Image } from 'astro:assets';
 import { ArrowRight, Image as ImageIcon } from '@lucide/astro';
 import { HOME_POST_COUNT, placeholderPosts } from '../data/blog';
-import { getPosts, toCard } from '../lib/blog';
+import { blogPath, getPosts, toCard } from '../lib/blog';
 import Badge from './ui/Badge.astro';
 import Button from './ui/Button.astro';
 import Card from './ui/Card.astro';
 import SectionHeading from './ui/SectionHeading.astro';
+import { getLocale, useTranslations } from '../i18n';
+
+const locale = getLocale(Astro.currentLocale);
+const t = useTranslations(locale);
 
 // Teaser: the newest few posts, or the placeholders until the first one
 // is published. /blog holds the full list.
-const published = await getPosts();
-const featured = (published.length ? published.map(toCard) : placeholderPosts).slice(
+const published = await getPosts(locale);
+const featured = (published.length ? published.map((post) => toCard(post, locale)) : placeholderPosts).slice(
 	0,
 	HOME_POST_COUNT,
 );
@@ -25,10 +29,10 @@ const featured = (published.length ? published.map(toCard) : placeholderPosts).s
 <section class="relative bg-bg-subtle pb-20 lg:pb-28">
 	<div class="mx-auto max-w-7xl px-5 sm:px-8">
 		<SectionHeading
-			eyebrow="Journal"
-			title="Guides & "
-			accent="streaming news"
-			description="Practical walkthroughs rather than press releases."
+			eyebrow={t.blogPreview.eyebrow}
+			title={t.blogPreview.title}
+			accent={t.blogPreview.accent}
+			description={t.blogPreview.description}
 		/>
 
 		<ul class="reveal-group mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
@@ -84,7 +88,7 @@ const featured = (published.length ? published.map(toCard) : placeholderPosts).s
 									post.href ? 'text-link' : 'text-fg-subtle',
 								]}
 							>
-								{post.href ? 'Read guide' : 'Coming soon'}
+								{post.href ? t.blogPreview.readGuide : t.blogPreview.comingSoon}
 								<ArrowRight
 									class="h-4 w-4 transition-transform group-hover:translate-x-1"
 									aria-hidden="true"
@@ -97,8 +101,8 @@ const featured = (published.length ? published.map(toCard) : placeholderPosts).s
 		</ul>
 
 		<div class="mt-12 text-center">
-			<Button href="/blog" variant="secondary" class="group">
-				See all
+			<Button href={blogPath(locale)} variant="secondary" class="group">
+				{t.blogPreview.seeAll}
 				<ArrowRight
 					class="h-4 w-4 transition-transform group-hover:translate-x-1"
 					aria-hidden="true"

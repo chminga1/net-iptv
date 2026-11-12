@@ -1,0 +1,330 @@
+---
+import { ArrowRight, Mail, MessageCircle, MessagesSquare } from '@lucide/astro';
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import PageHeader from '../components/PageHeader.astro';
+import Footer from '../components/Footer.astro';
+import Badge from '../components/ui/Badge.astro';
+import Button from '../components/ui/Button.astro';
+import Card from '../components/ui/Card.astro';
+import { site, whatsappLink } from '../data/site';
+import { getLocale, localizePath, useTranslations } from '../i18n';
+
+const locale = getLocale(Astro.currentLocale);
+const page = useTranslations(locale).pages.contact;
+const whatsappUrl = whatsappLink(page.whatsappMessage);
+
+const channels = [
+	{
+		icon: MessageCircle,
+		title: page.channels.whatsapp.title,
+		description: page.channels.whatsapp.description,
+		detail: site.whatsappDisplay,
+	},
+	{
+		icon: Mail,
+		title: page.channels.email.title,
+		description: page.channels.email.description,
+		detail: site.email,
+	},
+	{
+		icon: MessagesSquare,
+		title: page.channels.chat.title,
+		description: page.channels.chat.description,
+		detail: page.channels.chat.detail,
+	},
+];
+
+const field =
+	'mt-2 min-h-11 w-full rounded-xl border border-border bg-bg px-4 py-3 text-sm text-fg placeholder:text-fg-subtle transition-colors focus:border-primary';
+const label = 'block text-sm font-medium text-fg';
+---
+
+<Layout title={page.title} description={page.description}>
+	<Header />
+	<main id="main">
+		<PageHeader
+			eyebrow={page.eyebrow}
+			title={page.heading}
+			accent={page.accent}
+			description={page.intro}
+		/>
+
+		<section class="relative bg-bg pt-10 pb-20 lg:pt-14 lg:pb-28">
+			<div class="mx-auto max-w-7xl px-5 sm:px-8">
+				{/*
+					Fastest route to a human, so it leads the page. Horizontal from lg
+					up; stacks below that.
+				*/}
+				<div
+					class="flex flex-col gap-6 rounded-2xl border border-border bg-surface p-7 sm:p-8 lg:flex-row lg:items-center lg:justify-between lg:gap-10"
+				>
+					<div class="flex items-start gap-5">
+						<span
+							class="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-emerald-500 to-green-600 shadow-[0_0_30px_-6px_rgb(16_185_129/0.6)]"
+						>
+							<MessageCircle class="h-7 w-7 text-white" aria-hidden="true" />
+						</span>
+						<div>
+							<h2 class="text-xl font-black tracking-tight text-fg">
+								{page.preferWhatsapp}
+							</h2>
+							<p class="mt-2 max-w-xl text-sm leading-relaxed text-fg-muted">
+								{page.preferWhatsappBody}
+							</p>
+						</div>
+					</div>
+
+					<div class="shrink-0">
+						<a
+							href={whatsappUrl}
+							target="_blank"
+							rel="noopener noreferrer"
+							class="flex min-h-11 w-full cursor-pointer items-center justify-center gap-2 rounded-full bg-green-600 px-7 py-3.5 text-sm font-semibold text-white transition-all duration-200 hover:-translate-y-0.5 hover:bg-green-500 lg:w-auto"
+						>
+							{page.chatOnWhatsapp}
+							<ArrowRight class="h-4 w-4" aria-hidden="true" />
+						</a>
+						<p class="mt-3 text-center text-xs text-fg-subtle">
+							{site.whatsappDisplay} · {page.repliesUnder}
+						</p>
+					</div>
+				</div>
+
+				<ul class="reveal-group mt-8 grid gap-6 sm:grid-cols-3 lg:mt-10">
+					{
+						channels.map((channel) => (
+							<Card as="li" class="p-7">
+								<span class="flex h-12 w-12 items-center justify-center rounded-xl border border-primary/20 bg-primary/10 text-link">
+									<channel.icon class="h-6 w-6" aria-hidden="true" />
+								</span>
+								<h2 class="mt-6 text-lg font-bold text-fg">{channel.title}</h2>
+								<p class="mt-3 text-sm leading-relaxed text-fg-muted">
+									{channel.description}
+								</p>
+								<Badge class="mt-5">{channel.detail}</Badge>
+							</Card>
+						))
+					}
+				</ul>
+
+				<div class="mx-auto mt-16 max-w-3xl">
+					<div>
+						<h2 class="text-2xl font-black tracking-tight text-fg sm:text-3xl">
+							{page.formTitle}
+						</h2>
+						<p class="mt-3 text-sm text-fg-muted text-pretty">
+							{page.formIntro}
+						</p>
+
+						{/*
+							Submitted with fetch to /api/contact, which relays via Resend.
+							Deliberately no action/method: the endpoint speaks JSON, so a
+							native form POST would render a raw 415 error page. Without
+							JavaScript the <noscript> note below points at the direct
+							channels instead.
+						*/}
+						<form
+							id="contact-form"
+							class="mt-8 space-y-5"
+							data-send={page.send}
+							data-sending={page.sending}
+							data-success={page.success}
+							data-error={page.error}
+							data-network={page.network}
+							data-server-messages={page.useServerMessages ? 'true' : 'false'}
+						>
+							<div class="grid gap-5 sm:grid-cols-2">
+								<div>
+									<label for="name" class={label}>{page.name}</label>
+									<input
+										id="name"
+										name="name"
+										type="text"
+										required
+										autocomplete="name"
+										placeholder={page.namePlaceholder}
+										class={field}
+									/>
+								</div>
+								<div>
+									<label for="email" class={label}>{page.email}</label>
+									<input
+										id="email"
+										name="email"
+										type="email"
+										required
+										autocomplete="email"
+										placeholder={page.emailPlaceholder}
+										class={field}
+									/>
+								</div>
+							</div>
+
+							<div>
+								<label for="subject" class={label}>{page.subject}</label>
+								<select id="subject" name="subject" class={field}>
+									{page.subjects.map((option) => <option value={option.value}>{option.label}</option>)}
+								</select>
+							</div>
+
+							<div>
+								<label for="message" class={label}>{page.message}</label>
+								<textarea
+									id="message"
+									name="message"
+									rows="5"
+									required
+									placeholder={page.messagePlaceholder}
+									class={`${field} resize-y`}></textarea>
+							</div>
+
+							{/* Honeypot: off-screen and skipped by tab order, so only bots fill it. */}
+							<div class="absolute left-[-9999px]" aria-hidden="true">
+								<label for="company">Company</label>
+								<input
+									id="company"
+									name="company"
+									type="text"
+									tabindex="-1"
+									autocomplete="off"
+								/>
+							</div>
+
+							<noscript>
+								<p class="rounded-xl border border-border bg-surface-raised p-4 text-sm text-fg-muted">
+									{page.noscript(site.email)}
+								</p>
+							</noscript>
+
+							<div class="flex flex-col gap-4 sm:flex-row sm:items-center">
+								<Button
+									type="submit"
+									size="lg"
+									class="w-full sm:w-auto"
+									data-submit
+								>
+									<span data-label>{page.send}</span>
+									<svg
+										data-spinner
+										class="hidden h-4 w-4 animate-spin"
+										viewBox="0 0 24 24"
+										fill="none"
+										aria-hidden="true"
+									>
+										<circle
+											cx="12"
+											cy="12"
+											r="10"
+											stroke="currentColor"
+											stroke-width="3"
+											opacity="0.25"></circle>
+										<path
+											d="M22 12a10 10 0 0 1-10 10"
+											stroke="currentColor"
+											stroke-width="3"
+											stroke-linecap="round"></path>
+									</svg>
+								</Button>
+
+								{/*
+									aria-live so the outcome is announced, not just shown.
+									Rendered empty and filled by the handler.
+								*/}
+								<p
+									data-status
+									role="status"
+									aria-live="polite"
+									class="text-sm"
+								>
+								</p>
+							</div>
+						</form>
+
+						<p class="mt-8 border-t border-border pt-6 text-sm text-fg-muted">
+							{page.setupInstead}
+							<a
+								href={localizePath('/devices', locale)}
+								class="font-semibold text-link hover:underline"
+							>
+								{page.browseGuides}
+							</a>
+						</p>
+					</div>
+
+				</div>
+			</div>
+		</section>
+	</main>
+	<Footer />
+</Layout>
+
+<script>
+	const form = document.getElementById('contact-form') as HTMLFormElement | null;
+
+	if (form) {
+		const button = form.querySelector<HTMLButtonElement>('[data-submit]');
+		const label = form.querySelector<HTMLElement>('[data-label]');
+		const spinner = form.querySelector<HTMLElement>('[data-spinner]');
+		const status = form.querySelector<HTMLElement>('[data-status]');
+
+		const text = form.dataset;
+		const useServer = text.serverMessages === 'true';
+
+		const setStatus = (message: string, tone: 'ok' | 'error' | 'none') => {
+			if (!status) return;
+			status.textContent = message;
+			status.className =
+				'text-sm ' +
+				(tone === 'ok'
+					? 'font-medium text-[var(--trial-text)]'
+					: tone === 'error'
+						? 'font-medium text-red-400'
+						: 'text-fg-subtle');
+		};
+
+		const setBusy = (busy: boolean) => {
+			if (button) {
+				button.disabled = busy;
+				button.setAttribute('aria-busy', String(busy));
+			}
+			spinner?.classList.toggle('hidden', !busy);
+			if (label) label.textContent = (busy ? text.sending : text.send) ?? '';
+		};
+
+		form.addEventListener('submit', async (event) => {
+			// Only take over once we know we can: otherwise the native POST stands.
+			event.preventDefault();
+
+			// Let the browser surface its own required/type messages first.
+			if (!form.reportValidity()) return;
+
+			setBusy(true);
+			setStatus('', 'none');
+
+			const payload = Object.fromEntries(new FormData(form).entries());
+
+			try {
+				const response = await fetch('/api/contact', {
+					method: 'POST',
+					headers: { 'Content-Type': 'application/json' },
+					body: JSON.stringify(payload),
+				});
+
+				// A non-JSON body means something upstream broke; don't blow up on parse.
+				const result = await response.json().catch(() => null);
+
+				if (response.ok && result?.ok) {
+					setStatus((useServer && result.message) || text.success || '', 'ok');
+					form.reset();
+				} else {
+					setStatus((useServer && result?.error) || text.error || '', 'error');
+				}
+			} catch {
+				setStatus(text.network ?? '', 'error');
+			} finally {
+				setBusy(false);
+			}
+		});
+	}
+</script>

@@ -1,0 +1,79 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import PageHeader from '../components/PageHeader.astro';
+import Footer from '../components/Footer.astro';
+import PostRow from '../components/blog/PostRow.astro';
+import { CONTENT_RULES, type Cluster } from '../data/blog-strategy';
+import { site } from '../data/site';
+import {
+	blogPath,
+	toCard,
+	topicUrl,
+	type Post,
+} from '../lib/blog';
+import { breadcrumbSchema } from '../lib/blog-schema';
+import { getLocale, localizePath, useTranslations } from '../i18n';
+
+/**
+ * Archive for one cluster. Only clusters with at least one post get a page,
+ * and the page stays noindex (and out of the sitemap) until the cluster has
+ * enough articles not to be thin. The hub article leads the list.
+ */
+interface Props {
+	cluster: Cluster;
+	posts: Post[];
+}
+
+const { cluster, posts } = Astro.props;
+const locale = getLocale(Astro.currentLocale);
+const b = useTranslations(locale).blog;
+const ordered = [
+	...posts.filter((p) => p.id === cluster.hub),
+	...posts.filter((p) => p.id !== cluster.hub),
+];
+const origin = Astro.site ?? Astro.url;
+
+const schema = [
+	breadcrumbSchema(
+		[
+			{ name: b.home, path: localizePath('/', locale) },
+			{ name: b.blog, path: blogPath(locale) },
+			{ name: cluster.name, path: topicUrl(cluster.id, locale) },
+		],
+		origin,
+	),
+	{
+		'@context': 'https://schema.org',
+		'@type': 'CollectionPage',
+		name: `${cluster.name} — ${site.name} Blog`,
+		description: cluster.description,
+		url: new URL(topicUrl(cluster.id, locale), origin).href,
+		inLanguage: b.inLanguage,
+	},
+];
+---
+
+<Layout
+	title={`${cluster.name} | ${site.name} Blog`}
+	description={cluster.description}
+	noindex={posts.length < CONTENT_RULES.topicIndexThreshold}
+	schema={schema}
+>
+	<Header />
+	<main id="main">
+		<PageHeader eyebrow={b.topic.eyebrow} title={cluster.name} description={cluster.description} />
+
+		<section class="relative bg-bg py-20 lg:py-28">
+			<div class="mx-auto max-w-7xl px-5 sm:px-8">
+				<ul class="reveal-group mx-auto max-w-4xl space-y-5">
+					{ordered.map((post) => <PostRow post={toCard(post, locale)} />)}
+				</ul>
+				<p class="mt-12 text-center text-sm">
+					<a href={blogPath(locale)} class="font-semibold text-link hover:underline">{b.topic.browseAll}</a>
+				</p>
+			</div>
+		</section>
+	</main>
+	<Footer />
+</Layout>

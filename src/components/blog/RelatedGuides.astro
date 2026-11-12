@@ -2,6 +2,7 @@
 import { ArrowRight } from '@lucide/astro';
 import Card from '../ui/Card.astro';
 import { getCluster, postUrl, topicUrl, type Post, type RelatedGuides } from '../../lib/blog';
+import { getLocale, useTranslations } from '../../i18n';
 
 /**
  * Automatic cluster navigation under every article: pillar → hub → siblings
@@ -15,21 +16,23 @@ interface Props {
 }
 
 const { post, related } = Astro.props;
-const cluster = getCluster(post.data.cluster);
+const locale = getLocale(Astro.currentLocale);
+const r = useTranslations(locale).blog.related;
+const cluster = getCluster(post.data.cluster, locale);
 
 const items: { label: string; post: Post }[] = [
-	...(related.pillar ? [{ label: 'Start here', post: related.pillar }] : []),
-	...(related.hub ? [{ label: `${cluster.name} guide`, post: related.hub }] : []),
-	...related.hubs.map((hub) => ({ label: getCluster(hub.data.cluster).name, post: hub })),
+	...(related.pillar ? [{ label: r.startHere, post: related.pillar }] : []),
+	...(related.hub ? [{ label: r.clusterGuide(cluster.name), post: related.hub }] : []),
+	...related.hubs.map((hub) => ({ label: getCluster(hub.data.cluster, locale).name, post: hub })),
 	...related.siblings.map((sibling) => ({ label: cluster.name, post: sibling })),
 ];
 
 const heading =
 	post.data.role === 'pillar'
-		? 'Explore every topic'
+		? r.exploreAll
 		: post.data.role === 'hub'
-			? `Every guide in ${cluster.name}`
-			: 'Related guides';
+			? r.everyGuideIn(cluster.name)
+			: r.relatedGuides;
 ---
 
 {
@@ -39,8 +42,8 @@ const heading =
 				<h2 id="related-heading" class="text-2xl font-bold tracking-tight text-fg">
 					{heading}
 				</h2>
-				<a href={topicUrl(cluster.id)} class="text-sm font-semibold text-link hover:underline">
-					All {cluster.name} articles
+				<a href={topicUrl(cluster.id, locale)} class="text-sm font-semibold text-link hover:underline">
+					{r.allArticles(cluster.name)}
 				</a>
 			</div>
 			<ul class="mt-6 grid gap-4 sm:grid-cols-2">
@@ -50,7 +53,7 @@ const heading =
 							{item.label}
 						</span>
 						<p class="mt-2 font-semibold text-balance text-fg">
-							<a href={postUrl(item.post.id)} class="after:absolute after:inset-0 after:rounded-card">
+							<a href={postUrl(item.post.id, locale)} class="after:absolute after:inset-0 after:rounded-card">
 								{item.post.data.title}
 							</a>
 						</p>

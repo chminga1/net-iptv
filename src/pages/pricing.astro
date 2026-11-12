@@ -1,26 +1,5 @@
 ---
-import Layout from '../layouts/Layout.astro';
-import Header from '../components/Header.astro';
-import PageHeader from '../components/PageHeader.astro';
-import Pricing from '../components/Pricing.astro';
-import WhyUs from '../components/WhyUs.astro';
-import Footer from '../components/Footer.astro';
+import View from '../views/Pricing.astro';
 ---
 
-<Layout
-	title="Pricing & Plans | Net IPTV"
-	description="Subscription plans from €15 a month, or €70 a year with 2 months free. Instant activation, 7-day money-back guarantee, cancel anytime."
->
-	<Header />
-	<main id="main">
-		<PageHeader
-			eyebrow="Plans & pricing"
-			title="One subscription, "
-			accent="everything included"
-			description="No contracts, no hardware to buy and no hidden fees. Every plan carries the full library — pick the term that suits you."
-		/>
-		<Pricing showHeading={false} />
-		<WhyUs />
-	</main>
-	<Footer />
-</Layout>
+<View />

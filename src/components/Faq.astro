@@ -1,6 +1,6 @@
 ---
 import { ArrowRight, Plus } from '@lucide/astro';
-import { faqs } from '../data/site';
+import { basePath, getLocale, localizePath, useTranslations } from '../i18n';
 import Button from './ui/Button.astro';
 import SectionHeading from './ui/SectionHeading.astro';
 
@@ -12,11 +12,14 @@ interface Props {
 }
 
 const { showHeading = true, limit } = Astro.props;
+const locale = getLocale(Astro.currentLocale);
+const t = useTranslations(locale);
+const faqs = t.faqs;
 const shown = limit ? faqs.slice(0, limit) : faqs;
 
 // This component renders on the home page and on /faq. Linking /faq to itself
 // would be a dead control, so the CTA only appears away from that route.
-const onFaqPage = Astro.url.pathname.replace(/\/+$/, '') === '/faq';
+const onFaqPage = basePath(Astro.url.pathname) === '/faq';
 ---
 
 {/* Native <details>/<summary> — accessible and keyboard-operable, zero JS. */}
@@ -25,9 +28,9 @@ const onFaqPage = Astro.url.pathname.replace(/\/+$/, '') === '/faq';
 		{
 			showHeading && (
 			<SectionHeading
-				eyebrow="FAQ"
-				title="Questions, "
-				accent="answered"
+				eyebrow={t.faq.eyebrow}
+				title={t.faq.title}
+				accent={t.faq.accent}
 			/>
 			)
 		}
@@ -54,8 +57,8 @@ const onFaqPage = Astro.url.pathname.replace(/\/+$/, '') === '/faq';
 		{
 			!onFaqPage && (
 				<div class="mt-12 text-center">
-					<Button href="/faq" variant="secondary" class="group">
-						See all FAQ
+					<Button href={localizePath('/faq', locale)} variant="secondary" class="group">
+						{t.faq.seeAll}
 						<ArrowRight
 							class="h-4 w-4 transition-transform group-hover:translate-x-1"
 							aria-hidden="true"

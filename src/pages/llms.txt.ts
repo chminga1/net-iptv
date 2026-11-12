@@ -1,7 +1,7 @@
 import type { APIRoute } from 'astro';
 import { CLUSTERS, PILLAR_SLUG } from '../data/blog-strategy';
 import { moreLinks, navLinks, site } from '../data/site';
-import { getPosts, postUrl, postsInCluster } from '../lib/blog';
+import { getCluster, getPosts, postUrl, postsInCluster } from '../lib/blog';
 
 /**
  * llms.txt — a curated index for AI crawlers (llmstxt.org). Rebuilt from the
@@ -33,6 +33,18 @@ export const GET: APIRoute = async ({ site: origin }) => {
 		lines.push('', `## ${cluster.name}`);
 		for (const p of inCluster) {
 			lines.push(`- [${p.data.title}](${abs(postUrl(p.id))}): ${p.data.description}`);
+		}
+	}
+
+	// German translations (/de/blog/<slug>), grouped the same way.
+	const germanPosts = await getPosts('de');
+	for (const cluster of CLUSTERS) {
+		const inCluster = postsInCluster(germanPosts, cluster.id);
+		if (!inCluster.length) continue;
+		inCluster.sort((a, b) => Number(b.id === cluster.hub) - Number(a.id === cluster.hub));
+		lines.push('', `## ${getCluster(cluster.id, 'de').name} (Deutsch)`);
+		for (const p of inCluster) {
+			lines.push(`- [${p.data.title}](${abs(postUrl(p.id, 'de'))}): ${p.data.description}`);
 		}
 	}
 

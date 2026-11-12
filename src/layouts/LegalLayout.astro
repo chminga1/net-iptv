@@ -5,11 +5,9 @@ import PageHeader from '../components/PageHeader.astro';
 import Footer from '../components/Footer.astro';
 import Button from '../components/ui/Button.astro';
 
-export interface LegalSection {
-	readonly id: string;
-	readonly heading: string;
-	readonly body: readonly string[];
-}
+export type { LegalSection } from '../i18n/en';
+import type { LegalSection } from '../i18n/en';
+import { getLocale, localizePath, useTranslations } from '../i18n';
 
 /**
  * Shared shell for /terms and /privacy: sticky table of contents, the
@@ -38,29 +36,32 @@ const {
 	ctaHeading,
 	ctaBody,
 } = Astro.props;
+
+const locale = getLocale(Astro.currentLocale);
+const legal = useTranslations(locale).pages.legal;
 ---
 
 <Layout title={title} description={description}>
 	<Header />
 	<main id="main">
 		<PageHeader
-			eyebrow="Legal"
+			eyebrow={legal.eyebrow}
 			title={pageTitle}
 			accent={accent}
-			description={`Last updated ${lastUpdated}.`}
+			description={legal.lastUpdated(lastUpdated)}
 		/>
 
 		<section class="relative bg-bg pt-10 pb-20 lg:pt-14 lg:pb-28">
 			<div class="mx-auto max-w-7xl px-5 sm:px-8">
 				<div class="grid gap-10 lg:grid-cols-4 lg:gap-14">
-					<nav class="lg:col-span-1" aria-label="On this page">
+					<nav class="lg:col-span-1" aria-label={legal.onThisPage}>
 						<div
 							class="rounded-2xl border border-border bg-surface p-6 lg:sticky lg:top-24"
 						>
 							<h2
 								class="text-xs font-semibold tracking-[0.25em] text-accent uppercase"
 							>
-								On this page
+								{legal.onThisPage}
 							</h2>
 							<ul class="mt-5 space-y-3">
 								{
@@ -84,7 +85,7 @@ const {
 							class="rounded-2xl border border-amber-500/25 bg-amber-500/10 p-5"
 						>
 							<p class="text-sm leading-relaxed text-amber-200">
-								<strong class="font-semibold">Template notice:</strong>
+								<strong class="font-semibold">{legal.templateNotice}</strong>
 								{' '}{notice}
 							</p>
 						</div>
@@ -111,7 +112,7 @@ const {
 						<div class="mt-14 rounded-2xl border border-border bg-surface p-7">
 							<h2 class="text-lg font-bold text-fg">{ctaHeading}</h2>
 							<p class="mt-2 text-sm text-fg-muted">{ctaBody}</p>
-							<Button href="/contact" class="mt-5">Contact us</Button>
+							<Button href={localizePath('/contact', locale)} class="mt-5">{legal.contactUs}</Button>
 						</div>
 					</div>
 				</div>

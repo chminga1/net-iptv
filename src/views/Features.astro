@@ -1,0 +1,26 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import PageHeader from '../components/PageHeader.astro';
+import FeatureGrid from '../components/FeatureGrid.astro';
+import LeaguesDevices from '../components/LeaguesDevices.astro';
+import Footer from '../components/Footer.astro';
+import { useTranslations } from '../i18n';
+
+const page = useTranslations(Astro.currentLocale).pages.features;
+---
+
+<Layout title={page.title} description={page.description}>
+	<Header />
+	<main id="main">
+		<PageHeader
+			eyebrow={page.eyebrow}
+			title={page.heading}
+			accent={page.accent}
+			description={page.intro}
+		/>
+		<FeatureGrid showHeading={false} />
+		<LeaguesDevices />
+	</main>
+	<Footer />
+</Layout>

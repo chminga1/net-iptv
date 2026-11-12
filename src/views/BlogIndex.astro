@@ -1,0 +1,73 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import PageHeader from '../components/PageHeader.astro';
+import Footer from '../components/Footer.astro';
+import PostRow from '../components/blog/PostRow.astro';
+import { placeholderPosts } from '../data/blog';
+import { activeClusters, getPosts, toCard, topicUrl } from '../lib/blog';
+import { PILLAR_SLUG } from '../data/blog-strategy';
+import { getLocale, useTranslations } from '../i18n';
+
+const locale = getLocale(Astro.currentLocale);
+const b = useTranslations(locale).blog;
+
+const posts = await getPosts(locale);
+const hasPosts = posts.length > 0;
+
+// The pillar leads the list as the "start here" read; the rest follow newest first.
+const ordered = [
+	...posts.filter((p) => p.id === PILLAR_SLUG),
+	...posts.filter((p) => p.id !== PILLAR_SLUG),
+];
+const cards = hasPosts ? ordered.map((post) => toCard(post, locale)) : placeholderPosts;
+const topics = activeClusters(posts, locale);
+---
+
+<Layout title={b.index.title} description={b.index.description}>
+	<Header />
+	<main id="main">
+		<PageHeader
+			eyebrow={b.index.eyebrow}
+			title={b.index.heading}
+			accent={b.index.accent}
+			description={hasPosts ? b.index.intro : b.index.introEmpty}
+		>
+			{
+				hasPosts ? (
+					<nav aria-label={b.index.topicsLabel} class="mt-8 flex flex-wrap justify-center gap-2">
+						{topics.map((topic) => (
+							<a
+								href={topicUrl(topic.id, locale)}
+								class="glass rounded-full border px-4 py-1.5 text-xs font-medium text-fg transition-colors hover:border-primary/50"
+							>
+								{topic.name}
+							</a>
+						))}
+					</nav>
+				) : (
+					<span class="glass mt-8 inline-flex items-center gap-2 rounded-full border px-4 py-1.5 text-xs font-medium text-fg">
+						<span class="relative flex h-2 w-2" aria-hidden="true">
+							<span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-accent opacity-75" />
+							<span class="relative inline-flex h-2 w-2 rounded-full bg-accent" />
+						</span>
+						{b.index.soon}
+					</span>
+				)
+			}
+		</PageHeader>
+
+		<section class="relative bg-bg py-20 lg:py-28">
+			<div class="mx-auto max-w-7xl px-5 sm:px-8">
+				{/*
+					One post per row. Capped at max-w-4xl because a full-width text
+					row at 1280px+ runs past a comfortable reading measure.
+				*/}
+				<ul class="reveal-group mx-auto max-w-4xl space-y-5">
+					{cards.map((post) => <PostRow post={post} />)}
+				</ul>
+			</div>
+		</section>
+	</main>
+	<Footer />
+</Layout>

@@ -5,6 +5,7 @@ import { ArrowRight, Play } from '@lucide/astro';
 import Button from './ui/Button.astro';
 import SectionHeading from './ui/SectionHeading.astro';
 import { whatsappLink } from '../data/site';
+import { getLocale, localizePath, useTranslations } from '../i18n';
 
 import barbie from '../assets/posters/barbie.webp';
 import libraryGrid from '../assets/posters/library-grid.jpg';
@@ -16,32 +17,37 @@ import theCreator from '../assets/posters/the-creator.webp';
 
 interface Movie {
 	readonly title: string;
-	readonly meta: string;
+	readonly year: number;
+	readonly genre: 'scifi' | 'drama' | 'thriller' | 'action' | 'comedy';
 	readonly badge: string;
 	readonly poster: ImageMetadata;
 }
 
 const movies: readonly Movie[] = [
-	{ title: 'The Creator', meta: '2023 · Sci-Fi', badge: '4K', poster: theCreator },
-	{ title: 'Oppenheimer', meta: '2023 · Drama', badge: 'IMAX', poster: oppenheimer },
-	{ title: 'John Wick 4', meta: '2023 · Thriller', badge: 'HDR', poster: johnWick4 },
-	{ title: 'Gran Turismo', meta: '2023 · Action', badge: '4K', poster: granTurismo },
-	{ title: 'Dune: Part Two', meta: '2024 · Sci-Fi', badge: '4K', poster: dunePartTwo },
-	{ title: 'Barbie', meta: '2023 · Comedy', badge: '4K', poster: barbie },
+	{ title: 'The Creator', year: 2023, genre: 'scifi', badge: '4K', poster: theCreator },
+	{ title: 'Oppenheimer', year: 2023, genre: 'drama', badge: 'IMAX', poster: oppenheimer },
+	{ title: 'John Wick 4', year: 2023, genre: 'thriller', badge: 'HDR', poster: johnWick4 },
+	{ title: 'Gran Turismo', year: 2023, genre: 'action', badge: '4K', poster: granTurismo },
+	{ title: 'Dune: Part Two', year: 2024, genre: 'scifi', badge: '4K', poster: dunePartTwo },
+	{ title: 'Barbie', year: 2023, genre: 'comedy', badge: '4K', poster: barbie },
 ];
+
+const locale = getLocale(Astro.currentLocale);
+const t = useTranslations(locale);
+const href = (path: string) => localizePath(path, locale);
 ---
 
 <section id="movies" class="relative bg-bg py-20 lg:py-28">
 	<div class="mx-auto max-w-7xl px-5 sm:px-8">
 		<div class="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
 			<SectionHeading
-				eyebrow="On demand"
-				title="A library that keeps "
-				accent="growing"
+				eyebrow={t.movies.eyebrow}
+				title={t.movies.title}
+				accent={t.movies.accent}
 				align="left"
 			/>
-			<Button href="/pricing" variant="secondary" size="sm" class="group shrink-0">
-				Browse plans
+			<Button href={href('/pricing')} variant="secondary" size="sm" class="group shrink-0">
+				{t.movies.browsePlans}
 				<ArrowRight
 					class="h-4 w-4 transition-transform group-hover:translate-x-1"
 					aria-hidden="true"
@@ -55,10 +61,10 @@ const movies: readonly Movie[] = [
 					<li class="group w-44 shrink-0 snap-start sm:w-52">
 						{/* Each poster opens WhatsApp with the title pre-filled. */}
 						<a
-							href={whatsappLink(`Hi! I'd like to watch "${movie.title}" with Net IPTV.`)}
+							href={whatsappLink(t.movies.message(movie.title))}
 							target="_blank"
 							rel="noopener noreferrer"
-							aria-label={`Ask about watching ${movie.title} on WhatsApp`}
+							aria-label={t.movies.ariaLabel(movie.title)}
 							class="block"
 						>
 						<div class="relative aspect-2/3 overflow-hidden rounded-xl border border-border transition-all duration-300 group-hover:-translate-y-1 group-hover:border-primary/50">
@@ -98,7 +104,7 @@ const movies: readonly Movie[] = [
 						<h3 class="mt-3 truncate text-sm font-semibold text-fg">
 							{movie.title}
 						</h3>
-						<p class="text-xs text-fg-subtle">{movie.meta}</p>
+						<p class="text-xs text-fg-subtle">{movie.year} · {t.movies.genres[movie.genre]}</p>
 						</a>
 					</li>
 				))
@@ -110,7 +116,7 @@ const movies: readonly Movie[] = [
 				text lines beneath as the posters, so the row stays aligned.
 			*/}
 			<li class="group w-44 shrink-0 snap-start sm:w-52">
-				<a href="/pricing" class="block">
+				<a href={href('/pricing')} class="block">
 					<div class="relative aspect-2/3 overflow-hidden rounded-xl border border-border transition-all duration-300 group-hover:-translate-y-1 group-hover:border-primary/50">
 						<Image
 							src={libraryGrid}
@@ -131,7 +137,7 @@ const movies: readonly Movie[] = [
 
 						<span class="absolute inset-0 flex flex-col items-center justify-center gap-3 p-4 text-center">
 							<span class="text-balance text-sm font-bold leading-snug text-white">
-								+ more than 23,000 series and films
+								{t.movies.moreTitles}
 							</span>
 							<span class="flex h-9 w-9 items-center justify-center rounded-full bg-primary text-on-primary transition-transform duration-300 group-hover:scale-110">
 								<ArrowRight class="h-4 w-4" aria-hidden="true" />
@@ -139,9 +145,9 @@ const movies: readonly Movie[] = [
 						</span>
 					</div>
 					<h3 class="mt-3 truncate text-sm font-semibold text-fg">
-						Browse the full library
+						{t.movies.browseLibrary}
 					</h3>
-					<p class="text-xs text-fg-subtle">Included in every plan</p>
+					<p class="text-xs text-fg-subtle">{t.movies.includedInEveryPlan}</p>
 				</a>
 			</li>
 		</ul>
