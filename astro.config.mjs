@@ -15,7 +15,7 @@ import { sitemapNoindex } from './src/lib/sitemap-noindex';
  * Production origin, used for canonical URLs, the sitemap, robots.txt and
  * schema. SITE_URL overrides it, e.g. for a staging domain.
  */
-const SITE_URL = process.env.SITE_URL ?? 'https://netiptv.app';
+const SITE_URL = process.env.SITE_URL ?? 'https://www.netiptv.app';
 
 // https://astro.build/config
 export default defineConfig({
