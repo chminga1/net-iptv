@@ -1,7 +1,5 @@
 ---
-import { getLocale, useTranslations } from '../i18n';
-
-const t = useTranslations(getLocale(Astro.currentLocale));
+import { plans, guarantees } from '../data/site';
 import PricingCard from './ui/PricingCard.astro';
 import SectionHeading from './ui/SectionHeading.astro';
 
@@ -24,10 +22,10 @@ const { showHeading = true } = Astro.props;
 		{
 			showHeading && (
 			<SectionHeading
-				eyebrow={t.pricing.eyebrow}
-				title={t.pricing.title}
-				accent={t.pricing.accent}
-				description={t.pricing.description}
+				eyebrow="Plans"
+				title="Simple pricing, "
+				accent="no surprises"
+				description="Every plan carries the full library. Pick the term that suits you — the longer the term, the lower the monthly cost."
 			/>
 			)
 		}
@@ -38,9 +36,9 @@ const { showHeading = true } = Astro.props;
 				showHeading && 'mt-14',
 			]}
 		>
-			{t.plans.map((plan) => <PricingCard plan={plan} />)}
+			{plans.map((plan) => <PricingCard plan={plan} />)}
 		</div>
 
-		<p class="mt-10 text-center text-sm text-fg-subtle">{t.guarantees}</p>
+		<p class="mt-10 text-center text-sm text-fg-subtle">{guarantees}</p>
 	</div>
 </section>

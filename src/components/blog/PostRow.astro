@@ -4,7 +4,6 @@ import { ArrowRight, Image as ImageIcon } from '@lucide/astro';
 import Badge from '../ui/Badge.astro';
 import Card from '../ui/Card.astro';
 import type { BlogPost } from '../../data/blog';
-import { useTranslations } from '../../i18n';
 
 /**
  * One post per row, used by /blog and the topic pages. A post with `href`
@@ -18,7 +17,6 @@ interface Props {
 }
 
 const { post, as: Heading = 'h2' } = Astro.props;
-const b = useTranslations(Astro.currentLocale).blog;
 ---
 
 <Card as="li" class="group relative p-6 sm:p-7">
@@ -72,7 +70,7 @@ const b = useTranslations(Astro.currentLocale).blog;
 				post.href ? 'text-link' : 'text-fg-subtle',
 			]}
 		>
-			{post.href ? b.readGuide : b.comingSoon}
+			{post.href ? 'Read guide' : 'Coming soon'}
 			<ArrowRight
 				class="h-4 w-4 transition-transform group-hover:translate-x-1"
 				aria-hidden="true"

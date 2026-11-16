@@ -2,13 +2,8 @@
 import { Image } from 'astro:assets';
 import { ArrowRight } from '@lucide/astro';
 import heroBg from '../assets/hero-bg.webp';
-import { networks, whatsappLink } from '../data/site';
+import { guarantees, networks, site, whatsappLink } from '../data/site';
 import Button from './ui/Button.astro';
-import { getLocale, localizePath, useTranslations } from '../i18n';
-
-const locale = getLocale(Astro.currentLocale);
-const t = useTranslations(locale);
-const href = (path: string) => localizePath(path, locale);
 ---
 
 {/*
@@ -72,50 +67,50 @@ const href = (path: string) => localizePath(path, locale);
 					class="relative inline-flex h-2 w-2 rounded-full bg-trial-fill"
 				></span>
 			</span>
-			{t.hero.badge}
+			Free trial
 		</span>
 
 		<h1
 			class="mx-auto mt-8 max-w-4xl text-4xl font-black tracking-tight text-balance text-fg sm:text-6xl lg:text-7xl"
 		>
-			{t.site.tagline}
+			{site.tagline}
 		</h1>
 
 		<p
 			class="mx-auto mt-6 max-w-2xl text-base leading-8 tracking-wide text-fg-muted text-pretty sm:text-lg sm:leading-9"
 		>
-			{t.site.description}
+			{site.description}
 		</p>
 
 		<div class="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
 			<Button
-				href={whatsappLink(t.cta.trialMessage)}
+				href={whatsappLink('Hi! I would like to start the free trial.')}
 				external
 				size="lg"
 				variant="trial"
 				class="group w-full sm:w-auto"
 			>
-				{t.cta.startTrial}
+				Start free trial
 				<ArrowRight
 					class="h-4 w-4 transition-transform group-hover:translate-x-1"
 					aria-hidden="true"
 				/>
 			</Button>
 			<Button
-				href={href('/features')}
+				href="/features"
 				size="lg"
 				variant="secondary"
 				class="w-full sm:w-auto"
 			>
-				{t.hero.seeFeatures}
+				See Features
 			</Button>
 		</div>
 
-		<p class="mt-6 text-sm text-fg-subtle">{t.guarantees}</p>
+		<p class="mt-6 text-sm text-fg-subtle">{guarantees}</p>
 
 		<div class="mt-14 lg:mt-16">
 			<h2 class="text-xs font-semibold tracking-[0.25em] text-fg-subtle uppercase">
-				{t.hero.networks}
+				All your favourite networks included
 			</h2>
 			<ul
 				class="mx-auto mt-8 grid max-w-5xl grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-7 lg:gap-4"

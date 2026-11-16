@@ -4,13 +4,32 @@ import { whatsappLink } from '../data/site';
 import Button from './ui/Button.astro';
 import Card from './ui/Card.astro';
 import SectionHeading from './ui/SectionHeading.astro';
-import { getLocale, useTranslations } from '../i18n';
 
-const locale = getLocale(Astro.currentLocale);
-const t = useTranslations(locale);
+const reasons = [
+	{ title: 'Ultra fast servers', description: 'Global 20 Gbps network with automatic failover.' },
+	{ title: '4K / FHD / SD quality', description: 'Pick the bitrate that suits your connection.' },
+	{ title: '24/7 customer support', description: 'Live chat and WhatsApp, answered in minutes.' },
+	{ title: 'All devices compatibility', description: 'Smart TV, mobile, Fire Stick, MAG, desktop and consoles.' },
+	{ title: '7-day money-back guarantee', description: 'Not happy? Full refund, no questions asked.' },
+];
 
-const reasons = t.whyUs.reasons;
-const steps = t.whyUs.steps.map((step, index) => ({ ...step, number: String(index + 1) }));
+const steps = [
+	{
+		number: '1',
+		title: 'Place Your Order',
+		description: 'Choose the plan that fits you and check out securely in under a minute.',
+	},
+	{
+		number: '2',
+		title: 'Receive Your Details',
+		description: 'Credentials and a setup guide land in your inbox within 60 seconds.',
+	},
+	{
+		number: '3',
+		title: 'Start Streaming',
+		description: 'Sign in on any device and the full library is there waiting.',
+	},
+];
 ---
 
 <section class="relative bg-bg py-20 lg:py-28">
@@ -19,10 +38,10 @@ const steps = t.whyUs.steps.map((step, index) => ({ ...step, number: String(inde
 		<div class="space-y-16 lg:space-y-24">
 			<div>
 				<SectionHeading
-					eyebrow={t.whyUs.eyebrow}
-					title={t.whyUs.title}
-					accent={t.whyUs.accent}
-					description={t.whyUs.description}
+					eyebrow="The difference"
+					title="Why "
+					accent="us?"
+					description="Everything we promise is measurable — speed, uptime, response time and a refund policy that puts the risk on us, not you."
 				/>
 
 				<ul class="reveal-group mt-9 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -48,10 +67,10 @@ const steps = t.whyUs.steps.map((step, index) => ({ ...step, number: String(inde
 
 			<div>
 				<SectionHeading
-					eyebrow={t.whyUs.stepsEyebrow}
-					title={t.whyUs.stepsTitle}
-					accent={t.whyUs.stepsAccent}
-					description={t.whyUs.stepsDescription}
+					eyebrow="How it works"
+					title="Streaming in "
+					accent="3 steps"
+					description="No installers, no contracts, no waiting on a technician."
 				/>
 
 				<ol class="reveal-group mt-9 grid gap-5 lg:grid-cols-3">
@@ -82,14 +101,14 @@ const steps = t.whyUs.steps.map((step, index) => ({ ...step, number: String(inde
 				*/}
 				<div class="mt-10 border-t border-border pt-8 text-center">
 					<Button
-						href={whatsappLink(t.whyUs.orderMessage)}
+						href={whatsappLink('Hi! I would like to place an order.')}
 						external
 						class="w-full sm:w-auto"
 					>
-						{t.whyUs.orderButton}
+						Place Your Order
 					</Button>
 					<p class="mt-3 text-xs text-fg-subtle">
-						{t.whyUs.orderNote}
+						Instant activation · Cancel anytime
 					</p>
 				</div>
 			</div>

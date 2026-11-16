@@ -35,7 +35,6 @@ export const blogPostingSchema = (
 	author: Author,
 	origin: URL,
 	image?: string,
-	inLanguage = 'en',
 ) => ({
 	'@context': 'https://schema.org',
 	'@type': 'BlogPosting',
@@ -47,7 +46,7 @@ export const blogPostingSchema = (
 	publisher: organization(origin),
 	mainEntityOfPage: { '@type': 'WebPage', '@id': abs(path, origin) },
 	keywords: [post.data.primaryKeyword, ...post.data.secondaryKeywords].join(', '),
-	inLanguage,
+	inLanguage: 'en',
 	...(image ? { image } : {}),
 });
 

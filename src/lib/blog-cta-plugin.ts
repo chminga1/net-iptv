@@ -21,7 +21,7 @@ interface CtaVariant {
 	readonly external: boolean;
 }
 
-const VARIANTS_EN: readonly CtaVariant[] = [
+const VARIANTS: readonly CtaVariant[] = [
 	{
 		label: 'Get a free trial on WhatsApp',
 		note: 'No card needed · Activated in minutes',
@@ -38,28 +38,6 @@ const VARIANTS_EN: readonly CtaVariant[] = [
 		label: 'Compare plans and prices',
 		note: '1, 3, 6 or 12 months · 7-day money-back guarantee',
 		href: '/pricing',
-		external: false,
-	},
-];
-
-/** Same three CTAs for German posts (src/content/blog-de/). */
-const VARIANTS_DE: readonly CtaVariant[] = [
-	{
-		label: 'Kostenlos auf WhatsApp testen',
-		note: 'Keine Karte nötig · In wenigen Minuten aktiviert',
-		href: whatsappLink('Hallo! Ich möchte IPTV kostenlos testen.'),
-		external: true,
-	},
-	{
-		label: 'Frag uns alles auf WhatsApp',
-		note: 'Echte Menschen, 24/7 · Antwort in wenigen Minuten',
-		href: whatsappLink('Hallo! Ich habe eine Frage zu eurem IPTV-Dienst.'),
-		external: true,
-	},
-	{
-		label: 'Tarife und Preise vergleichen',
-		note: '1, 3, 6 oder 12 Monate · 7 Tage Geld-zurück-Garantie',
-		href: '/de/pricing',
 		external: false,
 	},
 ];
@@ -102,13 +80,7 @@ export function ctaSlots(h2Count: number): number[] {
 }
 
 export const blogCtaPlugin: HastPluginEntry = ({ fileURL }) => {
-	const path = fileURL?.pathname ?? '';
-	const variants = path.includes('/src/content/blog-de/')
-		? VARIANTS_DE
-		: path.includes('/src/content/blog/')
-			? VARIANTS_EN
-			: null;
-	if (!variants) return null;
+	if (!fileURL?.pathname.includes('/src/content/blog/')) return null;
 	return {
 		name: 'net-iptv-blog-cta',
 		after(root, ctx: HastVisitorContext) {
@@ -116,7 +88,7 @@ export const blogCtaPlugin: HastPluginEntry = ({ fileURL }) => {
 				(node): node is Element => node.type === 'element' && node.tagName === 'h2',
 			);
 			ctaSlots(h2s.length).forEach((slot, variant) => {
-				ctx.insertBefore(h2s[slot], ctaNode(variants[variant]));
+				ctx.insertBefore(h2s[slot], ctaNode(VARIANTS[variant]));
 			});
 		},
 	};

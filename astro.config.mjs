@@ -21,13 +21,6 @@ const SITE_URL = process.env.SITE_URL ?? 'https://www.netiptv.app';
 export default defineConfig({
   site: SITE_URL,
 
-  // English at the root, German under /de. Blog posts are English-only.
-  i18n: {
-    locales: ['en', 'de'],
-    defaultLocale: 'en',
-    routing: { prefixDefaultLocale: false },
-  },
-
   vite: {
     plugins: [tailwindcss()]
   },
@@ -37,13 +30,7 @@ export default defineConfig({
     // on-demand so they are never listed.
     sitemap({
       // Match the canonical URLs, which never end in a slash (except the root).
-      serialize: (item) => ({
-        ...item,
-        url: item.url.replace(/([^/])\/$/, '$1'),
-        links: item.links?.map((link) => ({ ...link, url: link.url.replace(/([^/])\/$/, '$1') })),
-      }),
-      // Adds hreflang alternates between /page and /de/page.
-      i18n: { defaultLocale: 'en', locales: { en: 'en', de: 'de' } },
+      serialize: (item) => ({ ...item, url: item.url.replace(/([^/])\/$/, '$1') }),
     }),
     // Must follow sitemap(): drops pages that render a robots noindex.
     sitemapNoindex(),

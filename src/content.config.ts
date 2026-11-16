@@ -1,4 +1,4 @@
-import { defineCollection, type SchemaContext } from 'astro:content';
+import { defineCollection } from 'astro:content';
 import { glob } from 'astro/loaders';
 import { z } from 'astro/zod';
 import { AUTHORS, CLUSTERS } from './data/blog-strategy';
@@ -12,7 +12,9 @@ const authorIds = AUTHORS.map((a) => a.id) as [string, ...string[]];
  * (src/data/blog-strategy.ts); src/lib/blog.ts checks that at build time.
  * Field-by-field guidance lives in docs/blog/ARTICLE_SPEC.md.
  */
-const postSchema = ({ image }: SchemaContext) =>
+const blog = defineCollection({
+	loader: glob({ pattern: '*.md', base: './src/content/blog' }),
+	schema: ({ image }) =>
 		z.object({
 			/** The H1. Contains the primary keyword. */
 			title: z.string().max(90),
@@ -56,20 +58,7 @@ const postSchema = ({ image }: SchemaContext) =>
 					steps: z.array(z.object({ name: z.string(), text: z.string() })).min(2),
 				})
 				.optional(),
-		});
-
-const blog = defineCollection({
-	loader: glob({ pattern: '*.md', base: './src/content/blog' }),
-	schema: postSchema,
+		}),
 });
 
-/**
- * German translations: src/content/blog-de/<slug>.md, served at
- * /de/blog/<slug>. The slug must match an English post; same schema.
- */
-const blogDe = defineCollection({
-	loader: glob({ pattern: '*.md', base: './src/content/blog-de' }),
-	schema: postSchema,
-});
-
-export const collections = { blog, blogDe };
+export const collections = { blog };
